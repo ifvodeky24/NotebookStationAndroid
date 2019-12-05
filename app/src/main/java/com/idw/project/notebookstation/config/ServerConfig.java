@@ -8,5 +8,6 @@ public class ServerConfig {
     public static final String PRODUK_IMAGE= ENDPOINT+ "/notebookstation/web/files/images/produk_images/";
     public static final String KONSUMEN_IMAGE= ENDPOINT+ "/notebookstation/web/files/images/konsumen_images/";
     public static final String TOKO_IMAGE= ENDPOINT+ "/notebookstation/web/files/images/toko_images/";
+    public static final String UPLOAD_FOTO_KONSUMEN = ENDPOINT+"/notebookstation/api/upload/upload-foto-konsumen.php";
 
 }

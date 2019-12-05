@@ -17,10 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.idw.project.notebookstation.R;
 import com.idw.project.notebookstation.activity.DetailProdukActivity;
+import com.idw.project.notebookstation.activity.MainActivity;
 import com.idw.project.notebookstation.adapter.ProdukAdapter;
 import com.idw.project.notebookstation.adapter.WishlistAdapter;
 import com.idw.project.notebookstation.model.Produk;
@@ -47,6 +49,8 @@ public class WishlistFragment extends Fragment {
 
     private ApiInterface apiInterface;
     private SessionManager sessionManager;
+    private LinearLayout ll_data_wishlist_kosong;
+    private Button btn_belanja_sekarang;
 
     String id_konsumen;
 
@@ -64,9 +68,20 @@ public class WishlistFragment extends Fragment {
         getActivity().setTitle("Wishlist");
 
         recylerView = view.findViewById(R.id.recylerView1);
+        ll_data_wishlist_kosong = view.findViewById(R.id.ll_data_wishlist_kosong);
+        btn_belanja_sekarang = view.findViewById(R.id.btn_belanja_sekarang);
 
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         sessionManager = new SessionManager(getActivity());
+
+        btn_belanja_sekarang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                getActivity().startActivity(intent);
+            }
+        });
 
         return view;
 
@@ -76,10 +91,6 @@ public class WishlistFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        if (sessionManager.isLoggedIn()){
-//            getWishlist();
-//
-//        }
     }
 
     private void getWishlist() {
@@ -91,6 +102,7 @@ public class WishlistFragment extends Fragment {
                 System.out.println("responya"+response);
                 if (response.isSuccessful()){
                     if(response.body().getMaster().size()>0){
+                        ll_data_wishlist_kosong.setVisibility(View.GONE);
                         wishlistArrayList.addAll(response.body().getMaster());
                         System.out.println(response.body().getMaster().get(0).getNamaProduk());
 
@@ -101,7 +113,8 @@ public class WishlistFragment extends Fragment {
                         recylerView.setAdapter(wishlistAdapter);
 
                     }else {
-                        Toast.makeText(getActivity(), "Data Wishlist Kosong", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getActivity(), "Data Wishlist Kosong", Toast.LENGTH_SHORT).show();
+                        ll_data_wishlist_kosong.setVisibility(View.VISIBLE);
                     }
                 }else {
                     Toast.makeText(getActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();

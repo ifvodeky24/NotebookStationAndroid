@@ -1,6 +1,7 @@
 package com.idw.project.notebookstation.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +12,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.idw.project.notebookstation.R;
-import com.idw.project.notebookstation.activity.DetailProdukActivity;
+import com.idw.project.notebookstation.activity.DetailKonfirmasiProdukActivity;
+import com.idw.project.notebookstation.activity.DetailProdukWishlistActivity;
+import com.idw.project.notebookstation.activity.LoginActivity;
 import com.idw.project.notebookstation.activity.MainActivity;
 import com.idw.project.notebookstation.config.ServerConfig;
 import com.idw.project.notebookstation.model.Produk;
@@ -43,10 +45,12 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
 
     private ArrayList<Wishlist> wishlistList;
 
+
     public WishlistAdapter(Context context, ArrayList<Wishlist> wishlistList) {
         this.context = context;
         this.wishlistList = wishlistList;
     }
+
 
     @NonNull
     @Override
@@ -70,83 +74,110 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
         wishlistViewHolder.tv_merk.setText(wishlistList.get(i).getMerkProduk());
         wishlistViewHolder.tv_harga.setText("Rp."+df.format(Double.valueOf(wishlistList.get(i).getHarga())));
 
-
         wishlistViewHolder.cv_wishlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(context, DetailProdukActivity.class);
-//                intent.putExtra(DetailProdukActivity.TAG, wishlistList.get(i));
-//                context.startActivity(intent);
+                Intent intent = new Intent(context, DetailProdukWishlistActivity.class);
+                intent.putExtra(Wishlist.TAG, wishlistList.get(i).getIdProduk());
+                System.out.println("id ini"+wishlistList.get(i).getIdProduk());
+                context.startActivity(intent);
             }
         });
 
         wishlistViewHolder.iv_hapus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                final ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
-                SessionManager sessionManager = new SessionManager(context);
-                Toast.makeText(context, "Klik Hapus", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 
-                apiInterface.checkId(String.valueOf(wishlistList.get(i).getIdProduk()), sessionManager.getLoginDetail().get(SessionManager.ID_KONSUMEN)).enqueue(new Callback<WishlistCheckResponse>() {
-                    @Override
-                    public void onResponse(Call<WishlistCheckResponse> call, Response<WishlistCheckResponse> response) {
-                        if (response.isSuccessful()){
-                            if (response.body() != null){
-                                if (response.body().getMaster().size()>0){
-                                    String id_wishlist = response.body().getMaster().get(0).getIdWishlist();
-                                    System.out.println("id wishlistnya adalah"+id_wishlist);
+                //set pesan dari dialog
+                alertDialogBuilder
+                        .setMessage("Anda ingin menghapus item ini?")
+                        .setCancelable(false)
+                        .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                final ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+                                SessionManager sessionManager = new SessionManager(context);
+//                Toast.makeText(context, "Klik Hapus", Toast.LENGTH_SHORT).show();
 
-                                    apiInterface.hapusWishlist(id_wishlist).enqueue(new Callback<HapusWishlistResponse>() {
-                                        @Override
-                                        public void onResponse(Call<HapusWishlistResponse> call, Response<HapusWishlistResponse> response) {
-                                            if (response.isSuccessful()){
-                                                Intent intent = new Intent(context, MainActivity.class);
-                                                context.startActivity(intent);
+                                apiInterface.checkId(String.valueOf(wishlistList.get(i).getIdProduk()), sessionManager.getLoginDetail().get(SessionManager.ID_KONSUMEN)).enqueue(new Callback<WishlistCheckResponse>() {
+                                    @Override
+                                    public void onResponse(Call<WishlistCheckResponse> call, Response<WishlistCheckResponse> response) {
+                                        if (response.isSuccessful()){
+                                            if (response.body() != null){
+                                                if (response.body().getMaster().size()>0){
+                                                    String id_wishlist = response.body().getMaster().get(0).getIdWishlist();
+                                                    System.out.println("id wishlistnya adalah"+id_wishlist);
 
-                                                Snackbar.make(view, "Dihapus dari Wishlist", Snackbar.LENGTH_LONG).show();
-                                            }else {
-                                                Toast.makeText(context, "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                                                    apiInterface.hapusWishlist(id_wishlist).enqueue(new Callback<HapusWishlistResponse>() {
+                                                        @Override
+                                                        public void onResponse(Call<HapusWishlistResponse> call, Response<HapusWishlistResponse> response) {
+                                                            if (response.isSuccessful()){
+                                                                Snackbar.make(view, "Dihapus dari Wishlist", Snackbar.LENGTH_LONG).show();
+
+
+                                                                Intent intent = new Intent(context, MainActivity.class);
+                                                                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                                                context.startActivity(intent);
+
+
+                                                            }else {
+                                                                Toast.makeText(context, "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(Call<HapusWishlistResponse> call, Throwable t) {
+                                                            Toast.makeText(context, "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+
+                                                }else {
+                                                    Toast.makeText(context, "id kosong", Toast.LENGTH_LONG).show();
+                                                }
                                             }
+                                        }else {
+                                            Toast.makeText(context, "terjadi kesalahan", Toast.LENGTH_SHORT).show();
                                         }
+                                    }
 
-                                        @Override
-                                        public void onFailure(Call<HapusWishlistResponse> call, Throwable t) {
-                                            Toast.makeText(context, "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-
-                                }else {
-                                    Toast.makeText(context, "id kosong", Toast.LENGTH_LONG).show();
-                                }
+                                    @Override
+                                    public void onFailure(Call<WishlistCheckResponse> call, Throwable t) {
+                                        Toast.makeText(context, "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
-                        }else {
-                            Toast.makeText(context, "terjadi kesalahan", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                        })
+                        .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
 
-                    @Override
-                    public void onFailure(Call<WishlistCheckResponse> call, Throwable t) {
-                        Toast.makeText(context, "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                            }
+                        });
+
+                //membuat alert dialog dari builder
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                //menampilkan alert dialog
+                alertDialog.show();
+
+
             }
         });
 
         wishlistViewHolder.btn_beli.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Klik Beli", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, DetailKonfirmasiProdukActivity.class);
+                intent.putExtra(Produk.TAG, Integer.parseInt(wishlistList.get(i).getIdProduk()));
+                System.out.println("nilai dari"+Integer.parseInt(wishlistList.get(i).getIdProduk()));
+                context.startActivity(intent);
             }
         });
 
     }
 
-    private void removeItem(Wishlist cartItem) {
-
-        int currPosition = wishlistList.indexOf(cartItem);
-        wishlistList.remove(currPosition);
-        notifyItemRemoved(currPosition);
-    }
 
     @Override
     public int getItemCount() {

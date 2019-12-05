@@ -74,7 +74,7 @@ public class PesananFragment extends Fragment {
         PesananPagerAdapter adapter = new PesananPagerAdapter(getChildFragmentManager());
 
         adapter.addFragment(new TransaksiFragment(), "Transaksi");
-        adapter.addFragment(new TransaksiFragment(), "Riwayat");
+        adapter.addFragment(new RiwayatFragment(), "Riwayat");
 
         viewPager.setAdapter(adapter);
     }

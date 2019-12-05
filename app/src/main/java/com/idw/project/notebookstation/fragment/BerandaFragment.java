@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.idw.project.notebookstation.R;
 import com.idw.project.notebookstation.adapter.ProdukAdapter;
 import com.idw.project.notebookstation.model.Produk;
+import com.idw.project.notebookstation.response.KonsumenDetailResponse;
 import com.idw.project.notebookstation.response.ProdukGetAllResponse;
 import com.idw.project.notebookstation.response.ProdukSearchResponse;
 import com.idw.project.notebookstation.rest.ApiClient;
@@ -144,6 +145,7 @@ public class BerandaFragment extends Fragment {
         if (sessionManager.isLoggedIn()){
             MenuItem menuItem = menu.findItem(R.id.chat);
             menuItem.setVisible(true);
+
         }
     }
 
@@ -157,7 +159,6 @@ public class BerandaFragment extends Fragment {
                 if (getFragmentManager() != null) {
                     new FullBottomSheetDialogFragment().show(getFragmentManager(), "search_dialog");
                 }
-                Toast.makeText(getActivity(), "Klik Chat", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return true;

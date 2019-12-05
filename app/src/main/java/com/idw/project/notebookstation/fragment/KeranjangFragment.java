@@ -1,12 +1,14 @@
 package com.idw.project.notebookstation.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,9 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.idw.project.notebookstation.R;
+import com.idw.project.notebookstation.activity.MainActivity;
 import com.idw.project.notebookstation.adapter.KeranjangAdapter;
 import com.idw.project.notebookstation.model.Keranjang;
 import com.idw.project.notebookstation.response.KeranjangDetailResponse;
@@ -38,6 +43,8 @@ public class KeranjangFragment extends Fragment {
     private RecyclerView recylerView;
     private KeranjangAdapter keranjangAdapter;
     private ArrayList<Keranjang> keranjangArrayList = new ArrayList<>();
+    LinearLayout ll_label, ll_data_keranjang_kosong;
+    private Button btn_belanja_sekarang, btn_beli;
 
     private ApiInterface apiInterface;
     private SessionManager sessionManager;
@@ -60,9 +67,36 @@ public class KeranjangFragment extends Fragment {
         getActivity().setTitle("Keranjang");
 
         recylerView = view.findViewById(R.id.recylerView1);
+        ll_label = view.findViewById(R.id.ll_label);
+        ll_data_keranjang_kosong = view.findViewById(R.id.ll_data_keranjang_kosong);
+        btn_belanja_sekarang = view.findViewById(R.id.btn_belanja_sekarang);
+        btn_beli = view.findViewById(R.id.btn_beli);
 
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         sessionManager = new SessionManager(getActivity());
+
+//        Fragment frg = null;
+//        frg = getFragmentManager().findFragmentByTag("Your_Fragment_TAG");
+//        final FragmentTransaction ft = getFragmentManager().beginTransaction();
+//        ft.detach(frg);
+//        ft.attach(frg);
+//        ft.commit();
+
+        btn_belanja_sekarang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                getActivity().startActivity(intent);
+            }
+        });
+
+        btn_beli.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "Klik beli", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return view;
     }
@@ -89,8 +123,10 @@ public class KeranjangFragment extends Fragment {
                 System.out.println("responnya"+response);
                 if (response.isSuccessful()){
                     if(response.body().getMaster().size()>0){
-                        keranjangArrayList.addAll(response.body().getMaster());
-                        System.out.println(response.body().getMaster().get(0).getNamaProduk());
+                        ll_data_keranjang_kosong.setVisibility(View.GONE);
+                        ll_label.setVisibility(View.VISIBLE);keranjangArrayList.addAll(response.body().getMaster());
+                        System
+                        .out.println(response.body().getMaster().get(0).getNamaProduk());
 
                         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
                         recylerView.setLayoutManager(manager);
@@ -99,7 +135,8 @@ public class KeranjangFragment extends Fragment {
                         recylerView.setAdapter(keranjangAdapter);
 
                     }else {
-                        Toast.makeText(getActivity(), "Data Keranjang Kosong", Toast.LENGTH_SHORT).show();
+                        ll_label.setVisibility(View.GONE);
+                        ll_data_keranjang_kosong.setVisibility(View.VISIBLE);
                     }
                 }else {
                     Toast.makeText(getActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
@@ -112,5 +149,7 @@ public class KeranjangFragment extends Fragment {
             }
         });
     }
+
+
 
 }

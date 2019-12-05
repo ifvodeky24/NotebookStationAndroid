@@ -14,18 +14,13 @@
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             card_view:cardElevation="3dp"
-            card_view:cardCornerRadius="4dp">
+            card_view:cardCornerRadius="4dp"
+            android:background="@color/colorWhite">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <CheckBox
-                    android:id="@+id/checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"/>
 
                 <ImageView
                     android:id="@+id/iv_foto"
@@ -33,6 +28,7 @@
                     android:layout_height="70dp"
                     android:layout_gravity="center"
                     android:scaleType="fitXY"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:src="@drawable/iv_produk1"/>
 
                 <LinearLayout
@@ -86,15 +82,22 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:layout_marginRight="4dp"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="4dp"
+                        android:paddingBottom="@dimen/activity_vertical_margin">
 
-                        <ImageView
-                            android:id="@+id/iv_hapus"
-                            android:layout_width="30dp"
-                            android:layout_height="25dp"
-                            android:src="@drawable/ic_trash"
-                            android:layout_weight="0.4"
-                            android:background="@drawable/bg_pressed_center"/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:layout_weight="0.4">
+
+                            <ImageView
+                                android:id="@+id/iv_hapus"
+                                android:layout_width="25dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/ic_trash" />
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -102,6 +105,12 @@
                             android:gravity="center"
                             android:orientation="horizontal"
                             android:layout_weight="0.6">
+
+<!--                            <TextView-->
+<!--                                android:layout_width="wrap_content"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:text="Jumlah:"-->
+<!--                                android:layout_marginRight="@dimen/activity_vertical_margin"/>-->
 
                             <com.google.android.material.floatingactionbutton.FloatingActionButton
                                 android:id="@+id/fab_qty_min"

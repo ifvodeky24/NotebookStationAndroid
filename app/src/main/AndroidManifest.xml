@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -14,15 +17,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.DetailKonfirmasiProdukActivity"></activity>
+        <activity android:name=".activity.MenungguKonfirmasiActivity"></activity>
+        <activity android:name=".activity.SampaiTujuanActivity" />
+        <activity android:name=".activity.SedangDikirimActivity" />
+        <activity android:name=".activity.PesananDiprosesActivity" />
+        <activity android:name=".activity.MenungguPembayaranActivity" />
+        <activity android:name=".activity.DetailProdukWishlistActivity" />
+        <activity android:name=".activity.KeranjangActivity" />
+        <activity android:name=".activity.DetailKonfirmasiProdukActivity" />
         <activity android:name=".activity.UbahPasswordActivity" />
         <activity android:name=".activity.UbahAkunActivity" />
-        <activity
-            android:name=".activity.DetailProdukActivity"
-            android:parentActivityName=".activity.MainActivity" />
+        <activity android:name=".activity.DetailProdukActivity" />
         <activity
             android:name=".activity.RegisterActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:parentActivityName=".activity.LoginActivity" />
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />

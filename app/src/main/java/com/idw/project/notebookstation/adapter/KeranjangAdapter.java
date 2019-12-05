@@ -1,6 +1,7 @@
 package com.idw.project.notebookstation.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -64,6 +66,39 @@ public class KeranjangAdapter extends RecyclerView.Adapter<KeranjangAdapter.Kera
         keranjangViewHolder.tv_nama_produk.setText(keranjangList.get(i).getNamaProduk());
         keranjangViewHolder.tv_merk.setText(keranjangList.get(i).getMerkProduk());
         keranjangViewHolder.tv_harga.setText("Rp."+df.format(Double.valueOf(keranjangList.get(i).getHarga())));
+
+        keranjangViewHolder.iv_hapus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+                //set pesan dari dialog
+                alertDialogBuilder
+                        .setMessage("Anda ingin menghapus item ini?")
+                        .setCancelable(false)
+                        .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+//                                Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+//                                finish();
+//                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+
+                            }
+                        });
+
+                //membuat alert dialog dari builder
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                //menampilkan alert dialog
+                alertDialog.show();
+            }
+        });
 
 
         keranjangViewHolder.cv_keranjang.setOnClickListener(new View.OnClickListener() {

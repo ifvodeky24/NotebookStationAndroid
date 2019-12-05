@@ -14,52 +14,32 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="245dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
+                android:layout_height="100dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:background="@drawable/bg_header_awan_hitam"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/activity_vertical_margin">
 
                 <TextView
                     android:id="@+id/tv_profil"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="32dp"
                     android:layout_marginBottom="5dp"
                     android:gravity="center"
                     android:text="Form Pendaftaran"
                     android:textColor="@color/colorWhite"
                     android:textSize="22sp"
-                    android:textStyle="bold"/>
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/iv_foto_user"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:src="@drawable/ic_akun_image">
-
-                </de.hdodenhof.circleimageview.CircleImageView>
-
-                <Button
-                    android:id="@+id/btn_pilih_foto_user"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginRight="140dp"
-                    android:layout_marginLeft="140dp"
-                    android:text="Pilih Foto"
-                    />
-
+                    android:fontFamily="sans-serif"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"/>
 
             </LinearLayout>
 
@@ -78,7 +58,7 @@
                 android:hint="Username"
                 android:layout_marginBottom="2dp"
                 android:layout_marginTop="15dp"
-                android:drawableLeft="@drawable/ic_keyboard"/>
+                android:drawableLeft="@drawable/ic_username"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -90,11 +70,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:id="@+id/et_password"
-                android:inputType="text"
+                android:inputType="textPassword"
                 android:hint="Password"
                 android:layout_marginBottom="2dp"
                 android:layout_marginTop="15dp"
-                android:drawableLeft="@drawable/ic_keyboard"/>
+                android:drawableLeft="@drawable/ic_password"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -110,7 +90,7 @@
                 android:hint="Nama Lengkap"
                 android:layout_marginBottom="2dp"
                 android:layout_marginTop="15dp"
-                android:drawableLeft="@drawable/ic_keyboard"/>
+                android:drawableLeft="@drawable/ic_name"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -122,11 +102,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:id="@+id/et_email"
-                android:inputType="text"
+                android:inputType="textEmailAddress"
                 android:hint="Email"
                 android:layout_marginBottom="2dp"
                 android:layout_marginTop="15dp"
-                android:drawableLeft="@drawable/ic_keyboard"/>
+                android:drawableLeft="@drawable/ic_email"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -138,11 +118,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:id="@+id/et_nomorhp"
-                android:inputType="text"
+                android:inputType="number"
                 android:hint="No HP"
                 android:layout_marginBottom="2dp"
                 android:layout_marginTop="15dp"
-                android:drawableLeft="@drawable/ic_keyboard"/>
+                android:drawableLeft="@drawable/ic_phone"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -158,7 +138,7 @@
                 android:hint="Alamat"
                 android:layout_marginBottom="2dp"
                 android:layout_marginTop="15dp"
-                android:drawableLeft="@drawable/ic_keyboard"/>
+                android:drawableLeft="@drawable/ic_address"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -170,7 +150,7 @@
             android:layout_marginBottom="16dp"
             android:text="Daftar"
             android:id="@+id/btn_register"
-            android:background="@drawable/custom_button"
+            android:background="@drawable/btn_1"
             android:textColor="@color/colorWhite"/>
 
     </LinearLayout>

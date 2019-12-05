@@ -2,9 +2,9 @@ package com.idw.project.notebookstation.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.idw.project.notebookstation.model.Konsumen;
+import com.idw.project.notebookstation.model.Keranjang;
 
-public class KonsumenRegisterResponse {
+public class TambahKeranjangResponse {
 
     @SerializedName("code")
     @Expose
@@ -14,7 +14,7 @@ public class KonsumenRegisterResponse {
     private String message;
     @SerializedName("data")
     @Expose
-    private Konsumen data;
+    private Keranjang data;
 
     public Integer getCode() {
         return code;
@@ -32,13 +32,12 @@ public class KonsumenRegisterResponse {
         this.message = message;
     }
 
-    public Konsumen getData() {
+    public Keranjang getData() {
         return data;
     }
 
-    public void setData(Konsumen data) {
+    public void setData(Keranjang data) {
         this.data = data;
     }
 
 }
-

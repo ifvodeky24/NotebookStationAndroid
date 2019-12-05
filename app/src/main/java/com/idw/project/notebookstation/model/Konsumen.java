@@ -25,13 +25,19 @@ public class Konsumen implements Parcelable {
     private String password;
     @SerializedName("nomor_hp")
     @Expose
-    private Integer nomorHp;
+    private String nomorHp;
     @SerializedName("alamat")
     @Expose
     private String alamat;
     @SerializedName("foto")
     @Expose
     private String foto;
+    @SerializedName("createdAt")
+    @Expose
+    private String createdAt;
+    @SerializedName("updatedAt")
+    @Expose
+    private String updatedAt;
 
     public Integer getIdKonsumen() {
         return idKonsumen;
@@ -73,11 +79,11 @@ public class Konsumen implements Parcelable {
         this.password = password;
     }
 
-    public Integer getNomorHp() {
+    public String getNomorHp() {
         return nomorHp;
     }
 
-    public void setNomorHp(Integer nomorHp) {
+    public void setNomorHp(String nomorHp) {
         this.nomorHp = nomorHp;
     }
 
@@ -97,6 +103,23 @@ public class Konsumen implements Parcelable {
         this.foto = foto;
     }
 
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -109,9 +132,11 @@ public class Konsumen implements Parcelable {
         dest.writeString(this.namaLengkap);
         dest.writeString(this.email);
         dest.writeString(this.password);
-        dest.writeValue(this.nomorHp);
+        dest.writeString(this.nomorHp);
         dest.writeString(this.alamat);
         dest.writeString(this.foto);
+        dest.writeString(this.createdAt);
+        dest.writeString(this.updatedAt);
     }
 
     public Konsumen() {
@@ -123,9 +148,11 @@ public class Konsumen implements Parcelable {
         this.namaLengkap = in.readString();
         this.email = in.readString();
         this.password = in.readString();
-        this.nomorHp = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.nomorHp = in.readString();
         this.alamat = in.readString();
         this.foto = in.readString();
+        this.createdAt = in.readString();
+        this.updatedAt = in.readString();
     }
 
     public static final Parcelable.Creator<Konsumen> CREATOR = new Parcelable.Creator<Konsumen>() {

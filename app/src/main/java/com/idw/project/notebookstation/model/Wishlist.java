@@ -8,6 +8,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class Wishlist implements Parcelable {
 
+    public static final String TAG ="id_produk";
+
     @SerializedName("id_produk")
     @Expose
     private String idProduk;

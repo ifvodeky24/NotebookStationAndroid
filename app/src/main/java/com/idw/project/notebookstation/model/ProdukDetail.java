@@ -44,6 +44,9 @@ public class ProdukDetail implements Parcelable {
     @SerializedName("foto_3")
     @Expose
     private String foto3;
+    @SerializedName("foto_4")
+    @Expose
+    private String foto4;
     @SerializedName("nama_toko")
     @Expose
     private String namaToko;
@@ -142,6 +145,14 @@ public class ProdukDetail implements Parcelable {
         this.foto3 = foto3;
     }
 
+    public String getFoto4() {
+        return foto4;
+    }
+
+    public void setFoto4(String foto4) {
+        this.foto4 = foto4;
+    }
+
     public String getNamaToko() {
         return namaToko;
     }
@@ -184,6 +195,7 @@ public class ProdukDetail implements Parcelable {
         dest.writeString(this.foto1);
         dest.writeString(this.foto2);
         dest.writeString(this.foto3);
+        dest.writeString(this.foto4);
         dest.writeString(this.namaToko);
         dest.writeString(this.logoToko);
         dest.writeString(this.nomorHp);
@@ -204,6 +216,7 @@ public class ProdukDetail implements Parcelable {
         this.foto1 = in.readString();
         this.foto2 = in.readString();
         this.foto3 = in.readString();
+        this.foto4 = in.readString();
         this.namaToko = in.readString();
         this.logoToko = in.readString();
         this.nomorHp = in.readString();

@@ -4,7 +4,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuItemCompat;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,9 +28,12 @@ import com.idw.project.notebookstation.R;
 import com.idw.project.notebookstation.config.ServerConfig;
 import com.idw.project.notebookstation.fragment.KeranjangFragment;
 import com.idw.project.notebookstation.model.Produk;
+import com.idw.project.notebookstation.response.HapusKeranjangResponse;
 import com.idw.project.notebookstation.response.HapusWishlistResponse;
+import com.idw.project.notebookstation.response.KeranjangCheckResponse;
 import com.idw.project.notebookstation.response.KeranjangCountResponse;
 import com.idw.project.notebookstation.response.ProdukDetailResponse;
+import com.idw.project.notebookstation.response.TambahKeranjangResponse;
 import com.idw.project.notebookstation.response.TambahWishlistResponse;
 import com.idw.project.notebookstation.response.WishlistCheckResponse;
 import com.idw.project.notebookstation.rest.ApiClient;
@@ -35,6 +43,7 @@ import com.idw.project.notebookstation.util.ViewAnimation;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,14 +61,14 @@ public class DetailProdukActivity extends AppCompatActivity {
     Integer id;
     int keranjang_count;
 
-    private View ll_tambah_wishlist, ll_hapus_wishlist, ll_beli, ll_tambah_keranjang;
+    private View ll_tambah_wishlist, ll_hapus_wishlist, ll_beli, ll_tambah_keranjang, ll_hapus_keranjang;
     private boolean rotate = false;
 
-    FloatingActionButton fab_add, fab_tambah_wishlist, fab_beli, fab_hapus_wishlist, fab_tambah_keranjang;
+    FloatingActionButton fab_add, fab_tambah_wishlist, fab_beli, fab_hapus_wishlist, fab_tambah_keranjang, fab_hapus_keranjang;
 
-    boolean favorite;
+    boolean favorite, keranjang;
 
-    String id_konsumen, id_wishlist, nama_toko, nomor_hp;
+    String id_konsumen, id_wishlist, nama_toko, nomor_hp, id_keranjang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,20 +100,23 @@ public class DetailProdukActivity extends AppCompatActivity {
         tv_deskripsi_produk = findViewById(R.id.tv_deskripsi_produk);
         tv_nama_toko = findViewById(R.id.tv_nama_toko);
         tv_no_handphone = findViewById(R.id.tv_no_handphone);
-        fab_tambah_wishlist = findViewById(R.id.fab_tambah_wishlist);
         fab_beli = findViewById(R.id.fab_beli);
         fab_tambah_keranjang = findViewById(R.id.fab_tambah_keranjang);
+        fab_hapus_keranjang = findViewById(R.id.fab_hapus_keranjang);
+        fab_tambah_wishlist = findViewById(R.id.fab_tambah_wishlist);
         fab_hapus_wishlist = findViewById(R.id.fab_hapus_wishlist);
         fab_add = findViewById(R.id.fab_add);
-        ll_tambah_wishlist = findViewById(R.id.ll_tambah_wishlist);
         ll_beli = findViewById(R.id.ll_beli);
+        ll_tambah_wishlist = findViewById(R.id.ll_tambah_wishlist);
         ll_hapus_wishlist = findViewById(R.id.ll_hapus_wishlist);
         ll_tambah_keranjang = findViewById(R.id.ll_tambah_keranjang);
+        ll_hapus_keranjang = findViewById(R.id.ll_hapus_keranjang);
 
         ViewAnimation.initShowOut(ll_tambah_wishlist);
         ViewAnimation.initShowOut(ll_hapus_wishlist);
         ViewAnimation.initShowOut(ll_beli);
         ViewAnimation.initShowOut(ll_tambah_keranjang);
+        ViewAnimation.initShowOut(ll_hapus_keranjang);
 
         if (sessionManager.isLoggedIn()){
             id_konsumen = sessionManager.getLoginDetail().get(SessionManager.ID_KONSUMEN);
@@ -126,12 +138,15 @@ public class DetailProdukActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(DetailProdukActivity.this, DetailKonfirmasiProdukActivity.class);
-                    intent.putExtra(DetailKonfirmasiProdukActivity.TAG, produk);
+                    intent.putExtra(Produk.TAG, produk.getIdProduk());
+                    System.out.println("nilai dari"+produk.getIdProduk());
                     startActivity(intent);
                 }
             });
         }else {
             fab_add.setVisibility(View.GONE);
+
+            dialog_login();
         }
 
         fab_tambah_wishlist.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +178,6 @@ public class DetailProdukActivity extends AppCompatActivity {
         fab_hapus_wishlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-
                 apiInterface.checkId(String.valueOf(id), id_konsumen).enqueue(new Callback<WishlistCheckResponse>() {
                     @Override
                     public void onResponse(Call<WishlistCheckResponse> call, Response<WishlistCheckResponse> response) {
@@ -186,6 +200,7 @@ public class DetailProdukActivity extends AppCompatActivity {
                                             }
                                         }
 
+
                                         @Override
                                         public void onFailure(Call<HapusWishlistResponse> call, Throwable t) {
                                             Toast.makeText(getApplicationContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
@@ -193,7 +208,7 @@ public class DetailProdukActivity extends AppCompatActivity {
                                     });
 
                                 }else {
-                                    Toast.makeText(getApplicationContext(), "id kosong", Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(getApplicationContext(), "id kosong", Toast.LENGTH_LONG).show();
                                 }
                             }
                         }else {
@@ -207,6 +222,80 @@ public class DetailProdukActivity extends AppCompatActivity {
                     }
                 });
 
+            }
+        });
+
+        fab_tambah_keranjang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                apiInterface.tambahKeranjang(id_konsumen, String.valueOf(id)).enqueue(new Callback<TambahKeranjangResponse>() {
+                    @Override
+                    public void onResponse(Call<TambahKeranjangResponse> call, Response<TambahKeranjangResponse> response) {
+                        if (response.isSuccessful()){
+                            keranjang = true;
+                            setKeranjang();
+                            getCount();
+
+                            Snackbar.make(view, "Ditambahkan ke keranjang", Snackbar.LENGTH_LONG).show();
+                        }else {
+                            Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<TambahKeranjangResponse> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        fab_hapus_keranjang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                apiInterface.checkIdKeranjang(String.valueOf(id), id_konsumen).enqueue(new Callback<KeranjangCheckResponse>() {
+                    @Override
+                    public void onResponse(Call<KeranjangCheckResponse> call, Response<KeranjangCheckResponse> response) {
+                        if (response.isSuccessful()){
+                            if (response.body() != null){
+                                if (response.body().getMaster().size()>0){
+                                    id_keranjang = response.body().getMaster().get(0).getIdKeranjang();
+                                    System.out.println("id keranjangnya adalah"+id_keranjang);
+
+                                    apiInterface.hapusKeranjang(id_keranjang).enqueue(new Callback<HapusKeranjangResponse>() {
+                                        @Override
+                                        public void onResponse(Call<HapusKeranjangResponse> call, Response<HapusKeranjangResponse> response) {
+                                            if (response.isSuccessful()){
+                                                keranjang = false;
+                                                setKeranjang();
+                                                getCount();
+
+                                                Snackbar.make(view, "Dihapus dari Keranjang", Snackbar.LENGTH_LONG).show();
+                                            }else {
+                                                Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<HapusKeranjangResponse> call, Throwable t) {
+                                            Toast.makeText(getApplicationContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                                }else {
+//                                    Toast.makeText(getApplicationContext(), "id kosong", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }else {
+                            Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<KeranjangCheckResponse> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
@@ -364,7 +453,39 @@ public class DetailProdukActivity extends AppCompatActivity {
             }
         });
 
+    }
 
+    private void dialog_login() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DetailProdukActivity.this);
+        alertDialogBuilder.setCancelable(true);
+
+        LayoutInflater inflater = getLayoutInflater();
+
+        View dialogView = inflater.inflate(R.layout.dialog_popup, null);
+
+        alertDialogBuilder.setView(dialogView);
+
+        Button btn_login = dialogView.findViewById(R.id.btn_login);
+        TextView tv_nanti_saja = dialogView.findViewById(R.id.tv_nanti_saja);
+
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+        btn_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DetailProdukActivity.this,LoginActivity.class);
+                finish();
+                startActivity(intent);
+            }
+        });
+
+        tv_nanti_saja.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
 
     }
 
@@ -399,6 +520,7 @@ public class DetailProdukActivity extends AppCompatActivity {
             ViewAnimation.showIn(ll_hapus_wishlist);
             ViewAnimation.showIn(ll_beli);
             ViewAnimation.showIn(ll_tambah_keranjang);
+            ViewAnimation.showIn(ll_hapus_keranjang);
 
             apiInterface.checkId(String.valueOf(id), id_konsumen).enqueue(new Callback<WishlistCheckResponse>() {
                 @Override
@@ -421,7 +543,7 @@ public class DetailProdukActivity extends AppCompatActivity {
                                 }
 
                             }else {
-                                Toast.makeText(getApplicationContext(), "id kosong", Toast.LENGTH_LONG).show();
+//                                Toast.makeText(getApplicationContext(), "id kosong", Toast.LENGTH_LONG).show();
                                 favorite = false;
                                 setFavorite();
                             }
@@ -437,11 +559,50 @@ public class DetailProdukActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
                 }
             });
+
+            apiInterface.checkIdKeranjang(String.valueOf(id), id_konsumen).enqueue(new Callback<KeranjangCheckResponse>() {
+                @Override
+                public void onResponse(Call<KeranjangCheckResponse> call, Response<KeranjangCheckResponse> response) {
+                    System.out.println("responsenya" + response);
+                    if (response.isSuccessful()){
+                        if (response.body() != null) {
+                            if (response.body().getMaster().size()>0){
+                                String id_produknya = response.body().getMaster().get(0).getIdProduk();
+                                String id_konsumennya = response.body().getMaster().get(0).getIdKonsumen();
+                                id_keranjang = response.body().getMaster().get(0).getIdKeranjang();
+                                System.out.println("id produknya "+id_produknya + "id konsumennya "+id_konsumennya);
+
+                                if (String.valueOf(id).equals(id_produknya) && id_konsumen.equals(id_konsumennya)){
+                                    keranjang = true;
+                                    setKeranjang();
+                                }else {
+                                    keranjang = false;
+                                    setKeranjang();
+                                }
+                            }else {
+//                                Toast.makeText(getApplicationContext(), "id keranjang kosong", Toast.LENGTH_LONG).show();
+                                keranjang = false;
+                                setKeranjang();
+                            }
+
+                        }
+
+                    }else {
+                        Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<KeranjangCheckResponse> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
             ViewAnimation.showOut(ll_tambah_wishlist);
             ViewAnimation.showOut(ll_hapus_wishlist);
             ViewAnimation.showOut(ll_beli);
             ViewAnimation.showOut(ll_tambah_keranjang);
+            ViewAnimation.showOut(ll_hapus_keranjang);
         }
     }
 
@@ -453,6 +614,16 @@ public class DetailProdukActivity extends AppCompatActivity {
         }else {
             ll_hapus_wishlist.setVisibility(View.GONE);
             ll_tambah_wishlist.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setKeranjang(){
+        if (keranjang){
+            ll_tambah_keranjang.setVisibility(View.GONE);
+            ll_hapus_keranjang.setVisibility(View.VISIBLE);
+        }else {
+            ll_hapus_keranjang.setVisibility(View.GONE);
+            ll_tambah_keranjang.setVisibility(View.VISIBLE);
         }
     }
 
@@ -517,6 +688,7 @@ public class DetailProdukActivity extends AppCompatActivity {
 
     private void goToMainActivity(){
         Intent intent = new Intent(DetailProdukActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
         finish();
     }
