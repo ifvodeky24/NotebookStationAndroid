@@ -40,6 +40,7 @@ public class DetailTransaksiActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_transaksi);
+        setTitle("Detail Transaksi");
 
         tv_status = findViewById(R.id.tv_status);
         tv_kode_pesanan = findViewById(R.id.tv_kode_pesanan);

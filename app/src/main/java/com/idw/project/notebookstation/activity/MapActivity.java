@@ -47,6 +47,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.idw.project.notebookstation.BuildConfig;
 import com.idw.project.notebookstation.R;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
@@ -88,7 +89,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView = mapFragment.getView();
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapActivity.this);
-        Places.initialize(MapActivity.this, "AIzaSyAAN_PARhpsAYReAGg4vuMv46NjRNel_cU");
+        Places.initialize(MapActivity.this, BuildConfig.API_KEY);
         placesClient = Places.createClient(this);
         final AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 

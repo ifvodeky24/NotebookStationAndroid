@@ -70,6 +70,7 @@ public class BeliTanpaLoginActivity extends AppCompatActivity implements OnMapRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_beli_tanpa_login);
+        setTitle("Pengiriman");
 
         edt_nama_lengkap = findViewById(R.id.edt_nama_lengkap);
         edt_email = findViewById(R.id.edt_email);
