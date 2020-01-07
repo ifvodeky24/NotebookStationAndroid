@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "895136198026",
+    "firebase_url": "https://notebookstation-5c181.firebaseio.com",
+    "project_id": "notebookstation-5c181",
+    "storage_bucket": "notebookstation-5c181.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895136198026:android:3e3e6f8a754ab0721dec73",
+        "android_client_info": {
+          "package_name": "com.idw.project.notebookstation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "895136198026-mcvog12026kcho5k63q2j20eu8ggt216.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.idw.project.notebookstation",
+            "certificate_hash": "6b447c59af9907025a939c0e817a54bf2ce0fbcc"
+          }
+        },
+        {
+          "client_id": "895136198026-eabh7co2pbheaaugjg4pshj1embp6pam.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAN_PARhpsAYReAGg4vuMv46NjRNel_cU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "895136198026-eabh7co2pbheaaugjg4pshj1embp6pam.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

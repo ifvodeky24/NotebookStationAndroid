@@ -18,7 +18,7 @@
             android:layout_width="250dp"
             android:layout_height="250dp"
             android:layout_gravity="center"
-            android:src="@drawable/data_wishlist_kosong"/>
+            android:src="@drawable/ic_transaksi_kosong"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -27,7 +27,8 @@
             android:gravity="center"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:text="Data Pesanan Kosong"/>
+            android:layout_marginTop="8dp"
+            android:text="Tidak Ada Hasil"/>
     </LinearLayout>
 
     <LinearLayout

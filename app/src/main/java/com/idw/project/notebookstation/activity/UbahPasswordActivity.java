@@ -50,13 +50,13 @@ public class UbahPasswordActivity extends AppCompatActivity {
 
     private void ubah_password() {
         intialize();
-        if (!validate()){
+        if (!validate()) {
             Toast.makeText(getApplicationContext(), "Gagal Ubah Kata Sandi", Toast.LENGTH_SHORT).show();
-        }else {
-            apiInterface.ubahPassword(sessionManager.getLoginDetail().get(SessionManager.ID_KONSUMEN),kata_sandi_baru).enqueue(new Callback<KonsumenUbahPasswordResponse>() {
+        } else {
+            apiInterface.ubahPassword(sessionManager.getLoginDetail().get(SessionManager.ID_KONSUMEN), kata_sandi_baru).enqueue(new Callback<KonsumenUbahPasswordResponse>() {
                 @Override
                 public void onResponse(Call<KonsumenUbahPasswordResponse> call, Response<KonsumenUbahPasswordResponse> response) {
-                    if (response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         Toast.makeText(getApplicationContext(), "Berhasil Ubah Kata Sandi", Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(UbahPasswordActivity.this, MainActivity.class);
@@ -70,7 +70,7 @@ public class UbahPasswordActivity extends AppCompatActivity {
                                 .LENGTH_SHORT).show();
 
                         Toast.makeText(getApplicationContext(), "Silahkan login kembali", Toast.LENGTH_SHORT).show();
-                    }else {
+                    } else {
                         Toast.makeText(UbahPasswordActivity.this, "Terjadi Kesalahan", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -86,23 +86,23 @@ public class UbahPasswordActivity extends AppCompatActivity {
 
     private boolean validate() {
         boolean valid = true;
-        if (kata_sandi_lama.isEmpty()){
+        if (kata_sandi_lama.isEmpty()) {
             edt_kata_sandi_lama.setError("Tolong Isi Kata Sandi Lama");
             valid = false;
-        }else if (!kata_sandi_lama.equals(sessionManager.getLoginDetail().get(SessionManager.PASSWORD))){
+        } else if (!kata_sandi_lama.equals(sessionManager.getLoginDetail().get(SessionManager.PASSWORD))) {
             edt_kata_sandi_lama.setError("Kata Sandi Lama Salah");
             valid = false;
         }
 
-        if (kata_sandi_baru.isEmpty()|kata_sandi_baru.length()>30){
+        if (kata_sandi_baru.isEmpty() | kata_sandi_baru.length() > 30) {
             edt_kata_sandi_baru.setError("Tolong Isi Kata Sandi Baru");
             valid = false;
         }
 
-        if (kata_sandi_ulang.isEmpty()){
+        if (kata_sandi_ulang.isEmpty()) {
             edt_kata_sandi_ulang.setError("Tolong Isi Kata Sandi Ulang");
             valid = false;
-        }else if (!kata_sandi_ulang.equals(kata_sandi_baru)){
+        } else if (!kata_sandi_ulang.equals(kata_sandi_baru)) {
             edt_kata_sandi_ulang.setError("Kata Sandi Ulang Tidak Sama");
             valid = false;
         }

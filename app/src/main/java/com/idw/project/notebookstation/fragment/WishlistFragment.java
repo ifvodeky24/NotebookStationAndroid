@@ -2,6 +2,7 @@ package com.idw.project.notebookstation.fragment;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -64,8 +65,9 @@ public class WishlistFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_wishlist, container, false);
 
-        Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).show();
-        getActivity().setTitle("Wishlist");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(getActivity()).setTitle("Wishlist");
+        }
 
         recylerView = view.findViewById(R.id.recylerView1);
         ll_data_wishlist_kosong = view.findViewById(R.id.ll_data_wishlist_kosong);
@@ -101,23 +103,25 @@ public class WishlistFragment extends Fragment {
             public void onResponse(Call<WishlistDetailResponse> call, Response<WishlistDetailResponse> response) {
                 System.out.println("responya"+response);
                 if (response.isSuccessful()){
-                    if(response.body().getMaster().size()>0){
-                        ll_data_wishlist_kosong.setVisibility(View.GONE);
-                        wishlistArrayList.addAll(response.body().getMaster());
-                        System.out.println(response.body().getMaster().get(0).getNamaProduk());
+                    if (response.body() != null) {
+                        if(response.body().getMaster().size()>0){
+                            ll_data_wishlist_kosong.setVisibility(View.GONE);
+                            wishlistArrayList.addAll(response.body().getMaster());
+                            System.out.println(response.body().getMaster().get(0).getNamaProduk());
 
-                        LinearLayoutManager manager = new GridLayoutManager(getActivity(), 2);
-                        recylerView.setLayoutManager(manager);
-                        recylerView.setHasFixedSize(true);
-                        wishlistAdapter = new WishlistAdapter(getActivity(), wishlistArrayList);
-                        recylerView.setAdapter(wishlistAdapter);
+                            LinearLayoutManager manager = new GridLayoutManager(getActivity(), 2);
+                            recylerView.setLayoutManager(manager);
+                            recylerView.setHasFixedSize(true);
+                            wishlistAdapter = new WishlistAdapter(getActivity(), wishlistArrayList);
+                            recylerView.setAdapter(wishlistAdapter);
 
-                    }else {
-//                        Toast.makeText(getActivity(), "Data Wishlist Kosong", Toast.LENGTH_SHORT).show();
-                        ll_data_wishlist_kosong.setVisibility(View.VISIBLE);
+                        }else {
+    //                        Toast.makeText(getActivity(), "Data Wishlist Kosong", Toast.LENGTH_SHORT).show();
+                            ll_data_wishlist_kosong.setVisibility(View.VISIBLE);
+                        }
                     }
                 }else {
-                    Toast.makeText(getActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                 }
             }
 

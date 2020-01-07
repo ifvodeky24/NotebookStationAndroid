@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Anda mau beli produk ini?login dulu yaa"
+        android:text="Ooops anda tidak mengakses fitur ini"
         android:textAlignment="center"
         android:fontFamily="sans-serif"
         android:textColor="@android:color/black"
@@ -57,7 +57,7 @@
         android:textSize="12sp"
         android:text="Yuk daftar aja kalau belum punya akun, tunggu apalagi!"
         android:textAlignment="center"
-        android:textColor="@android:color/darker_gray"/>
+        android:textColor="@color/grey_60"/>
 
     <Button
         android:id="@+id/btn_login"
@@ -81,7 +81,7 @@
         android:textAlignment="center"
         android:layout_marginTop="8dp"
         android:textSize="12sp"
-        android:textColor="@android:color/darker_gray" />
+        android:textColor="@color/grey_60" />
 
 
 </LinearLayout>

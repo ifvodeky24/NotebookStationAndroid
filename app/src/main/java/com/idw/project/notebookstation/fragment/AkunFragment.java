@@ -2,6 +2,7 @@ package com.idw.project.notebookstation.fragment;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.freshchat.consumer.sdk.Freshchat;
 import com.idw.project.notebookstation.R;
 import com.idw.project.notebookstation.activity.DetailProdukActivity;
 import com.idw.project.notebookstation.activity.MainActivity;
@@ -55,10 +57,11 @@ public class AkunFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_akun, container, false);
+        View view = inflater.inflate(R.layout.fragment_akun, container, false);
 
-        Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).show();
-        getActivity().setTitle("Akun");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(getActivity()).setTitle("Akun");
+        }
 
         LinearLayout ll_pengaturan_akun = view.findViewById(R.id.ll_pengaturan_akun);
         LinearLayout ll_pengaturan_password = view.findViewById(R.id.ll_pengaturan_password);
@@ -72,12 +75,12 @@ public class AkunFragment extends Fragment implements View.OnClickListener {
         sessionManager = new SessionManager(getActivity());
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
-        if (sessionManager.isLoggedIn()){
+        if (sessionManager.isLoggedIn()) {
             apiInterface.konsumenById(sessionManager.getLoginDetail().get(SessionManager.ID_KONSUMEN)).enqueue(new Callback<KonsumenDetailResponse>() {
                 @Override
                 public void onResponse(Call<KonsumenDetailResponse> call, Response<KonsumenDetailResponse> response) {
-                    if (response.isSuccessful()){
-                        if (response.body().getMaster().size()>0){
+                    if (response.isSuccessful()) {
+                        if (response.body() != null && response.body().getMaster().size() > 0) {
                             final String foto = response.body().getMaster().get(0).getFoto();
                             String nama_lengkap = response.body().getMaster().get(0).getNamaLengkap();
                             String email = response.body().getMaster().get(0).getEmail();
@@ -88,11 +91,11 @@ public class AkunFragment extends Fragment implements View.OnClickListener {
                             tv_email.setText(email);
                             tv_noHp.setText(no_hp);
 
-                            if (iv_user_images != null){
+                            if (iv_user_images != null) {
                                 Picasso.with(getActivity())
-                                        .load(ServerConfig.KONSUMEN_IMAGE+foto)
+                                        .load(ServerConfig.KONSUMEN_IMAGE + foto)
                                         .into(iv_user_images);
-                            }else {
+                            } else {
                                 Picasso.with(getActivity())
                                         .load(R.drawable.ic_user_image)
                                         .into(iv_user_images);
@@ -116,7 +119,7 @@ public class AkunFragment extends Fragment implements View.OnClickListener {
 
 
                                     Picasso.with(getActivity())
-                                            .load(ServerConfig.KONSUMEN_IMAGE+foto)
+                                            .load(ServerConfig.KONSUMEN_IMAGE + foto)
                                             .into(iv_tampilkan_foto_konsumen);
 
                                     AlertDialog alertDialog = alertDialogBuilder.create();
@@ -124,8 +127,8 @@ public class AkunFragment extends Fragment implements View.OnClickListener {
                                 }
                             });
                         }
-                    }else {
-                        Toast.makeText(getActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -135,8 +138,6 @@ public class AkunFragment extends Fragment implements View.OnClickListener {
                 }
             });
         }
-
-
 
 
         //set on click
@@ -149,18 +150,17 @@ public class AkunFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(view.getId() ==R.id.ll_pengaturan_akun){
+        if (view.getId() == R.id.ll_pengaturan_akun) {
             Intent intent = new Intent(getActivity(), UbahAkunActivity.class);
             startActivity(intent);
-        }
-        else if (view.getId() ==R.id.ll_pengaturan_password){
-            Intent intent  = new Intent (getActivity(), UbahPasswordActivity.class);
+        } else if (view.getId() == R.id.ll_pengaturan_password) {
+            Intent intent = new Intent(getActivity(), UbahPasswordActivity.class);
             startActivity(intent);
-        }
-        else if (view.getId() ==R.id.keluar){
+        } else if (view.getId() == R.id.keluar) {
             sessionManager.logout();
+            Freshchat.resetUser(getActivity());
             Intent intent_logout = new Intent(getActivity(), MainActivity.class);
-            intent_logout.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY );
+            intent_logout.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
             getActivity().finish();
             startActivity(intent_logout);
             Toast.makeText(getActivity(), "Anda Berhasil Keluar", Toast.LENGTH_SHORT).show();

@@ -1,20 +1,17 @@
 package com.idw.project.notebookstation.fragment;
 
 
-import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,14 +23,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.freshchat.consumer.sdk.Freshchat;
+import com.freshchat.consumer.sdk.FreshchatCallbackStatus;
+import com.freshchat.consumer.sdk.UnreadCountCallback;
 import com.idw.project.notebookstation.R;
+import com.idw.project.notebookstation.activity.TransaksiKhususActivity;
 import com.idw.project.notebookstation.adapter.ProdukAdapter;
 import com.idw.project.notebookstation.model.Produk;
-import com.idw.project.notebookstation.response.KonsumenDetailResponse;
 import com.idw.project.notebookstation.response.ProdukGetAllResponse;
-import com.idw.project.notebookstation.response.ProdukSearchResponse;
 import com.idw.project.notebookstation.rest.ApiClient;
 import com.idw.project.notebookstation.rest.ApiInterface;
 import com.idw.project.notebookstation.util.SessionManager;
@@ -55,12 +55,10 @@ public class BerandaFragment extends Fragment {
     private ProdukAdapter produkAdapter;
     private ArrayList<Produk> produkArrayList = new ArrayList<>();
     private SessionManager sessionManager;
-    private SearchView searchView;
     private ApiInterface apiInterface;
+    private TextView tv_notification_badge;
 
-    SliderLayout sliderLayout;
-
-
+    private SliderLayout sliderLayout;
 
     public BerandaFragment() {
         // Required empty public constructor
@@ -73,14 +71,13 @@ public class BerandaFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_beranda, container, false);
 
-        Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).show();
-        getActivity().setTitle("Senapelan Computer");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(getActivity()).setTitle("Senapelan Computer");
+        }
 
         sliderLayout = view.findViewById(R.id.imageSlider);
         sliderLayout.setIndicatorAnimation(SliderLayout.Animations.FILL);
         sliderLayout.setScrollTimeInSec(6);
-
-        setSliderViews();
 
         recylerView = view.findViewById(R.id.recylerView);
 
@@ -89,8 +86,19 @@ public class BerandaFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
+        setSliderViews();
+
+
+        if (sessionManager.isLoggedIn()){
+            setupBadge();
+        }
+
 
         return view;
+    }
+
+    private void launchFreshchat() {
+        Freshchat.showConversations(getActivity());
     }
 
     private void setSliderViews() {
@@ -119,7 +127,6 @@ public class BerandaFragment extends Fragment {
 
             sliderView.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
 
-            final int finalI = i;
             sliderView.setOnSliderClickListener(new SliderView.OnSliderClickListener() {
                 @Override
                 public void onSliderClick(SliderView sliderView) {
@@ -143,17 +150,84 @@ public class BerandaFragment extends Fragment {
         super.onPrepareOptionsMenu(menu);
 
         if (sessionManager.isLoggedIn()){
-            MenuItem menuItem = menu.findItem(R.id.chat);
+
+            final MenuItem menuItem = menu.findItem(R.id.chat);
             menuItem.setVisible(true);
 
+            View actionView = menuItem.getActionView();
+
+            tv_notification_badge = actionView.findViewById(R.id.tv_notification_badge_chat);
+
+            actionView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onOptionsItemSelected(menuItem);
+                }
+            });
+
+        }else {
+            final MenuItem menuItem2 = menu.findItem(R.id.cek_status);
+            menuItem2.setVisible(true);
         }
+    }
+
+    private void setupBadge() {
+        Freshchat.getInstance(getActivity()).getUnreadCountAsync(new UnreadCountCallback() {
+            @Override
+            public void onResult(FreshchatCallbackStatus freshchatCallbackStatus, int unreadCount) {
+                //Assuming "badgeTextView" is a text view to show the count on
+
+
+                if (unreadCount == 0) {
+                    if (tv_notification_badge.getVisibility() != View.GONE) {
+                        tv_notification_badge.setVisibility(View.GONE);
+                    }
+                } else {
+                    tv_notification_badge.setText(Integer.toString(unreadCount));
+                    if (tv_notification_badge.getVisibility() != View.VISIBLE) {
+                        tv_notification_badge.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+
+        BroadcastReceiver unreadCountChangeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Freshchat.getInstance(Objects.requireNonNull(getActivity())).getUnreadCountAsync(new UnreadCountCallback() {
+                    @Override
+                    public void onResult(FreshchatCallbackStatus freshchatCallbackStatus, int unreadCount) {
+                        //Assuming "badgeTextView" is a text view to show the count on
+                        if (unreadCount == 0) {
+                            if (tv_notification_badge.getVisibility() != View.GONE) {
+                                tv_notification_badge.setVisibility(View.GONE);
+                            }
+                        } else {
+                            tv_notification_badge.setText(Integer.toString(unreadCount));
+                            if (tv_notification_badge.getVisibility() != View.VISIBLE) {
+                                tv_notification_badge.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter(Freshchat.FRESHCHAT_UNREAD_MESSAGE_COUNT_CHANGED);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(unreadCountChangeReceiver, intentFilter);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.chat:
-                Toast.makeText(getActivity(), "Klik Chat", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Klik Chat", Toast.LENGTH_SHORT).show();
+                launchFreshchat();
+                return true;
+            case R.id.cek_status:
+//                Toast.makeText(getActivity(), "Cek status", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), TransaksiKhususActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.search:
                 if (getFragmentManager() != null) {
@@ -178,18 +252,20 @@ public class BerandaFragment extends Fragment {
             public void onResponse(Call<ProdukGetAllResponse> call, Response<ProdukGetAllResponse> response) {
                 System.out.println("responya"+response);
                 if (response.isSuccessful()){
-                    if(response.body().getMaster().size()>0){
-                        produkArrayList.addAll(response.body().getMaster());
-                        System.out.println(response.body().getMaster().get(0).getNamaProduk());
+                    if (response.body() != null) {
+                        if(response.body().getMaster().size()>0){
+                            produkArrayList.addAll(response.body().getMaster());
+                            System.out.println(response.body().getMaster().get(0).getNamaProduk());
 
-                        LinearLayoutManager manager = new GridLayoutManager(getActivity(), 2);
-                        recylerView.setLayoutManager(manager);
-                        recylerView.setHasFixedSize(true);
-                        produkAdapter = new ProdukAdapter(getActivity(), produkArrayList);
-                        recylerView.setAdapter(produkAdapter);
+                            LinearLayoutManager manager = new GridLayoutManager(getActivity(), 2);
+                            recylerView.setLayoutManager(manager);
+                            recylerView.setHasFixedSize(true);
+                            produkAdapter = new ProdukAdapter(getActivity(), produkArrayList);
+                            recylerView.setAdapter(produkAdapter);
 
-                    }else {
-                        Toast.makeText(getActivity(), "Data Produk Kosong", Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast.makeText(getActivity(), "Data Produk Kosong", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                 }else{
@@ -200,7 +276,7 @@ public class BerandaFragment extends Fragment {
             @Override
             public void onFailure(Call<ProdukGetAllResponse> call, Throwable t) {
                 t.printStackTrace();
-
+                Toast.makeText(getActivity(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
             }
         });
     }

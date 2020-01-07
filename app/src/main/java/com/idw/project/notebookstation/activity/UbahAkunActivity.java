@@ -130,7 +130,7 @@ public class UbahAkunActivity extends AppCompatActivity {
                             }
                         }
                     }else {
-                        Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                     }
                 }
 

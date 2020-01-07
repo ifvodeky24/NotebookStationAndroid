@@ -12,13 +12,13 @@ tools:context=".fragment.RiwayatFragment">
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
-    android:layout_marginTop="80dp">
+    android:layout_marginTop="60dp">
 
     <ImageView
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_gravity="center"
-        android:src="@drawable/data_wishlist_kosong"/>
+        android:src="@drawable/ic_riwayat_kosong"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -27,7 +27,8 @@ tools:context=".fragment.RiwayatFragment">
         android:gravity="center"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:text="Data Riwayat Kosong"/>
+        android:layout_marginTop="8dp"
+        android:text="Tidak Ada Hasil"/>
 </LinearLayout>
 
 <LinearLayout

@@ -1,11 +1,18 @@
 package com.idw.project.notebookstation.rest;
 
+import com.idw.project.notebookstation.response.BatalKhususResponse;
 import com.idw.project.notebookstation.response.BatalResponse;
+import com.idw.project.notebookstation.response.BayarKhususResponse;
+import com.idw.project.notebookstation.response.BayarResponse;
+import com.idw.project.notebookstation.response.BeliKhususResponse;
+import com.idw.project.notebookstation.response.BeliResponse;
 import com.idw.project.notebookstation.response.HapusKeranjangResponse;
 import com.idw.project.notebookstation.response.HapusWishlistResponse;
 import com.idw.project.notebookstation.response.KeranjangCheckResponse;
 import com.idw.project.notebookstation.response.KeranjangCountResponse;
 import com.idw.project.notebookstation.response.KeranjangDetailResponse;
+import com.idw.project.notebookstation.response.KeranjangSumResponse;
+import com.idw.project.notebookstation.response.KeranjangUpdateResponse;
 import com.idw.project.notebookstation.response.KonsumenDetailResponse;
 import com.idw.project.notebookstation.response.KonsumenFotoProfilResponse;
 import com.idw.project.notebookstation.response.KonsumenLoginResponse;
@@ -13,7 +20,9 @@ import com.idw.project.notebookstation.response.KonsumenRegistrasiResponse;
 import com.idw.project.notebookstation.response.KonsumenUbahPasswordResponse;
 import com.idw.project.notebookstation.response.MenungguKonfirmasiResponse;
 import com.idw.project.notebookstation.response.MenungguPembayaranResponse;
+import com.idw.project.notebookstation.response.PesananDetailResponse;
 import com.idw.project.notebookstation.response.PesananDiprosesResponse;
+import com.idw.project.notebookstation.response.PesananKhususDetailResponse;
 import com.idw.project.notebookstation.response.ProdukDetailResponse;
 import com.idw.project.notebookstation.response.ProdukGetAllResponse;
 import com.idw.project.notebookstation.response.ProdukSearchResponse;
@@ -23,6 +32,8 @@ import com.idw.project.notebookstation.response.SelesaiResponse;
 import com.idw.project.notebookstation.response.TambahKeranjangResponse;
 import com.idw.project.notebookstation.response.TambahWishlistResponse;
 import com.idw.project.notebookstation.response.UbahProfilResponse;
+import com.idw.project.notebookstation.response.UpdateCatatanResponse;
+import com.idw.project.notebookstation.response.UpdateRestoreIdResponse;
 import com.idw.project.notebookstation.response.WishlistCheckResponse;
 import com.idw.project.notebookstation.response.WishlistDetailResponse;
 
@@ -95,9 +106,15 @@ public interface ApiInterface {
             @Query("id_konsumen") String id_konsumen
     );
 
-    //untuk get detail keranjang berdasarkan id konsumen
+    //untuk hitung data keranjang berdasarkan id konsumen
     @GET("keranjang/count-keranjang")
     Call<KeranjangCountResponse> keranjangCount(
+            @Query("id_konsumen") String id_konsumen
+    );
+
+    //untuk jumlah harga barang keranjang berdasarkan id konsumen
+    @GET("keranjang/sum-keranjang")
+    Call<KeranjangSumResponse> keranjangSum(
             @Query("id_konsumen") String id_konsumen
     );
 
@@ -113,7 +130,10 @@ public interface ApiInterface {
     @POST("keranjang/tambah-keranjang")
     Call<TambahKeranjangResponse> tambahKeranjang(
             @Field("id_konsumen") String id_konsumen,
-            @Field("id_produk") String id_produk
+            @Field("id_produk") String id_produk,
+            @Field("jumlah") String jumlah,
+            @Field("jumlah_harga") String jumlah_harga,
+            @Field("catatan_opsional") String catatan_opsional
     );
 
     //Untuk hapus keranjang
@@ -209,6 +229,115 @@ public interface ApiInterface {
     @GET("pesanan/by-id-batal")
     Call<BatalResponse> batal(
             @Query("id_konsumen") String id_konsumen
+    );
+
+
+    //Beli
+    @FormUrlEncoded
+    @POST("pesanan/beli")
+    Call<BeliResponse> beli(
+            @Field("kode_pesanan") String kode_pesanan,
+            @Field("id_konsumen") String id_konsumen,
+            @Field("id_produk") String id_produk,
+            @Field("jumlah") String jumlah,
+            @Field("total_tagihan") String total_tagihan,
+            @Field("catatan_opsional") String catatan_opsional,
+            @Field("alamat_lengkap") String alamat_lengkap,
+            @Field("latitude") String latitude,
+            @Field("longitude") String longitude
+    );
+
+    //update catatan di pesanan
+    @FormUrlEncoded
+    @POST("keranjang/update-catatan")
+    Call<UpdateCatatanResponse> updateCatatan(
+            @Field("id_keranjang") String id_keranjang,
+            @Field("catatan_opsional") String catatan_opsional
+    );
+
+    //Keranjang Update
+    @FormUrlEncoded
+    @POST("keranjang/update-keranjang")
+    Call<KeranjangUpdateResponse> updateKeranjang(
+            @Field("id_keranjang") String id_keranjang,
+            @Field("jumlah") String jumlah,
+            @Field("jumlah_harga") String jumlah_harga,
+            @Field("catatan_opsional") String catatan_opsional
+    );
+
+    //RestoreId Update
+    @FormUrlEncoded
+    @POST("konsumen/update-restore-id")
+    Call<UpdateRestoreIdResponse> updateRestoreId(
+            @Field("id_konsumen") String id_konsumen,
+            @Field("restore_id") String restore_id
+    );
+
+    //untuk get data pesanan detail
+    @GET("pesanan/by-id-pesanan")
+    Call<PesananDetailResponse> pesananDetail(
+            @Query("id_konsumen") String id_konsumen,
+            @Query("kode_pesanan") String kode_pesanan
+    );
+
+    //bayar
+    @FormUrlEncoded
+    @POST("pembayaran/bayar")
+    Call<BayarResponse> bayar(
+            @Field("id_pesanan") String id_pesanan,
+            @Field("bukti_transfer") String bukti_transfer,
+            @Field("jumlah_transfer") String jumlah_transfer,
+            @Field("status") String status
+    );
+
+    //batalkan pesanan
+    @FormUrlEncoded
+    @POST("pesanan/batal-pesanan")
+    Call<BatalResponse> batalkanPesanan(
+            @Field("id_pesanan") String id_pesanan,
+            @Field("status") String status
+    );
+
+    //untuk get data pesanan detail
+    @GET("pesanan-khusus/by-id")
+    Call<PesananKhususDetailResponse> pesananKhususDetail(
+            @Query("kode_pesanan") String kode_pesanan
+    );
+
+    //Beli khusus
+    @FormUrlEncoded
+    @POST("pesanan-khusus/beli")
+    Call<BeliKhususResponse> beliKhusus(
+            @Field("kode_pesanan") String kode_pesanan,
+            @Field("id_produk") String id_produk,
+            @Field("jumlah") String jumlah,
+            @Field("total_tagihan") String total_tagihan,
+            @Field("status") String status,
+            @Field("catatan_opsional") String catatan_opsional,
+            @Field("nama_lengkap") String nama_lengkap,
+            @Field("alamat_lengkap") String alamat_lengkap,
+            @Field("email") String email,
+            @Field("nomor_hp") String nomor_hp,
+            @Field("latitude") String latitude,
+            @Field("longitude") String longitude
+    );
+
+    //batalkan pesanan khusus
+    @FormUrlEncoded
+    @POST("pesanan-khusus/batal-pesanan")
+    Call<BatalKhususResponse> batalkanPesananKhusus(
+            @Field("id_pesanan_khusus") String id_pesanan_khusus,
+            @Field("status") String status
+    );
+
+    //bayar
+    @FormUrlEncoded
+    @POST("pembayaran-khusus/bayar")
+    Call<BayarKhususResponse> bayarKhusus(
+            @Field("id_pesanan_khusus") String id_pesanan_khusus,
+            @Field("bukti_transfer") String bukti_transfer,
+            @Field("jumlah_transfer") String jumlah_transfer,
+            @Field("status") String status
     );
 
 }

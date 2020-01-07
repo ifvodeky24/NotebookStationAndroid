@@ -212,6 +212,17 @@
                 android:layout_marginRight="6dp"
                 android:background="@drawable/bg_pressed_center"/>
 
+            <ImageView
+                android:id="@+id/iv_hapus_keranjang"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_hapus_keranjang"
+                android:layout_weight="0"
+                android:layout_gravity="center"
+                android:layout_marginRight="6dp"
+                android:background="@drawable/bg_pressed_center"
+                android:visibility="gone"/>
+
             <Button
                 android:id="@+id/btn_beli"
                 android:layout_width="120dp"

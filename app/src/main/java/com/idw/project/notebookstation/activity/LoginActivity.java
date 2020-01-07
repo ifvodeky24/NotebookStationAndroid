@@ -91,6 +91,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 String strPassword = response.body().getData().getPassword();
                                 String strNomorHp = String.valueOf(response.body().getData().getNomorHp());
                                 String strAlamat = response.body().getData().getAlamat();
+                                String strRestoreId = response.body().getData().getRestoreId();
                                 String strFoto = response.body().getData().getFoto();
 
                                 sessionManager.createLogginSession(String.valueOf(strId),
@@ -100,6 +101,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         strPassword,
                                         strNomorHp,
                                         strAlamat,
+                                        strRestoreId,
                                         strFoto);
 
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -113,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             }
                         } else {
-                            Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                         }
                     }
 

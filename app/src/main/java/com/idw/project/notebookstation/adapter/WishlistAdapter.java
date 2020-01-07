@@ -20,7 +20,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.idw.project.notebookstation.R;
 import com.idw.project.notebookstation.activity.DetailKonfirmasiProdukActivity;
 import com.idw.project.notebookstation.activity.DetailProdukWishlistActivity;
-import com.idw.project.notebookstation.activity.LoginActivity;
 import com.idw.project.notebookstation.activity.MainActivity;
 import com.idw.project.notebookstation.config.ServerConfig;
 import com.idw.project.notebookstation.model.Produk;
@@ -98,7 +97,6 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
                             public void onClick(DialogInterface dialog, int which) {
                                 final ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
                                 SessionManager sessionManager = new SessionManager(context);
-//                Toast.makeText(context, "Klik Hapus", Toast.LENGTH_SHORT).show();
 
                                 apiInterface.checkId(String.valueOf(wishlistList.get(i).getIdProduk()), sessionManager.getLoginDetail().get(SessionManager.ID_KONSUMEN)).enqueue(new Callback<WishlistCheckResponse>() {
                                     @Override
@@ -113,16 +111,13 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
                                                         @Override
                                                         public void onResponse(Call<HapusWishlistResponse> call, Response<HapusWishlistResponse> response) {
                                                             if (response.isSuccessful()){
-                                                                Snackbar.make(view, "Dihapus dari Wishlist", Snackbar.LENGTH_LONG).show();
+                                                                Toast.makeText(context, "Data Berhasil dihapus", Toast.LENGTH_SHORT).show();
 
-
-                                                                Intent intent = new Intent(context, MainActivity.class);
-                                                                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                                                                context.startActivity(intent);
-
-
+                                                                wishlistList.remove(i);
+                                                                notifyItemRemoved(i);
+                                                                notifyDataSetChanged();
                                                             }else {
-                                                                Toast.makeText(context, "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                                                             }
                                                         }
 
@@ -137,7 +132,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
                                                 }
                                             }
                                         }else {
-                                            Toast.makeText(context, "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                                         }
                                     }
 

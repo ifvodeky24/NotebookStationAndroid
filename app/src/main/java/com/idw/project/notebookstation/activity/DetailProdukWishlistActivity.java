@@ -42,13 +42,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailProdukWishlistActivity extends AppCompatActivity {
-    ImageView iv_foto_produk,  iv_foto_produk2, iv_foto_produk3, iv_foto_produk4, iv_logo_toko;
-    TextView tv_stok_produk, tv_merk_produk, tv_kondisi, tv_nama_produk, tv_harga_produk, tv_deskripsi_produk,  tv_nama_toko, tv_no_handphone;
+    ImageView iv_foto_produk, iv_foto_produk2, iv_foto_produk3, iv_foto_produk4, iv_logo_toko;
+    TextView tv_stok_produk, tv_merk_produk, tv_kondisi, tv_nama_produk, tv_harga_produk, tv_deskripsi_produk, tv_nama_toko, tv_no_handphone;
     TextView tv_notification_badge;
     ApiInterface apiInterface;
     SessionManager sessionManager;
 
-    public static  final String TAG ="produk";
+    public static final String TAG = "produk";
     String id;
     int keranjang_count;
 
@@ -61,6 +61,7 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
 
     String id_konsumen, id_wishlist, nama_toko, nomor_hp, id_keranjang, nama_produk, merk_produk, kondisi, harga_produk, deskripsi_produk, stok_produk;
     String foto1, foto2, foto3, foto4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,9 +73,9 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
 
         id = getIntent().getStringExtra(Wishlist.TAG);
 
-        System.out.println("id produk"+id);
+        System.out.println("id produk" + id);
 
-        DecimalFormat df = new DecimalFormat( "#,###");
+        DecimalFormat df = new DecimalFormat("#,###");
 
         iv_foto_produk = findViewById(R.id.iv_foto_produk);
         iv_foto_produk2 = findViewById(R.id.iv_foto_produk2);
@@ -107,12 +108,70 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
         ViewAnimation.initShowOut(ll_tambah_keranjang);
         ViewAnimation.initShowOut(ll_hapus_keranjang);
 
-        if (sessionManager.isLoggedIn()){
+        if (sessionManager.isLoggedIn()) {
             id_konsumen = sessionManager.getLoginDetail().get(SessionManager.ID_KONSUMEN);
 
             System.out.println("cek id" + id_konsumen);
 
             getCount();
+
+            apiInterface.produkById(String.valueOf(id)).enqueue(new Callback<ProdukDetailResponse>() {
+                @Override
+                public void onResponse(Call<ProdukDetailResponse> call, Response<ProdukDetailResponse> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body().getMaster().size() > 0) {
+                            nama_produk = response.body().getMaster().get(0).getNamaProduk();
+                            merk_produk = response.body().getMaster().get(0).getMerkProduk();
+                            kondisi = response.body().getMaster().get(0).getKondisi();
+                            harga_produk = response.body().getMaster().get(0).getHarga();
+                            deskripsi_produk = response.body().getMaster().get(0).getDeskripsi();
+                            stok_produk = response.body().getMaster().get(0).getStok();
+                            nama_toko = response.body().getMaster().get(0).getNamaToko();
+                            nomor_hp = response.body().getMaster().get(0).getNomorHp();
+                            foto1 = response.body().getMaster().get(0).getFoto1();
+                            foto2 = response.body().getMaster().get(0).getFoto2();
+                            foto3 = response.body().getMaster().get(0).getFoto3();
+                            foto4 = response.body().getMaster().get(0).getFoto4();
+
+                            tv_nama_produk.setText(nama_produk);
+                            tv_merk_produk.setText("Merk Produk:  " + merk_produk);
+                            tv_kondisi.setText("Kondisi:  " + kondisi);
+                            tv_harga_produk.setText("Rp. " + harga_produk);
+                            tv_deskripsi_produk.setText(deskripsi_produk);
+                            tv_stok_produk.setText("Stok Tersedia " + stok_produk);
+                            tv_nama_toko.setText(nama_toko);
+                            tv_no_handphone.setText(nomor_hp);
+
+                            Picasso.with(DetailProdukWishlistActivity.this)
+                                    .load(ServerConfig.PRODUK_IMAGE + foto1)
+                                    .into(iv_foto_produk);
+
+                            Picasso.with(DetailProdukWishlistActivity.this)
+                                    .load(ServerConfig.PRODUK_IMAGE + foto2)
+                                    .into(iv_foto_produk2);
+
+                            Picasso.with(DetailProdukWishlistActivity.this)
+                                    .load(ServerConfig.PRODUK_IMAGE + foto3)
+                                    .into(iv_foto_produk3);
+
+                            Picasso.with(DetailProdukWishlistActivity.this)
+                                    .load(ServerConfig.PRODUK_IMAGE + foto4)
+                                    .into(iv_foto_produk4);
+
+                            Picasso.with(DetailProdukWishlistActivity.this)
+                                    .load(ServerConfig.TOKO_IMAGE + response.body().getMaster().get(0).getLogoToko())
+                                    .into(iv_logo_toko);
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ProdukDetailResponse> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+                }
+            });
 
             fab_add.setVisibility(View.VISIBLE);
 
@@ -128,11 +187,11 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     Intent intent = new Intent(DetailProdukWishlistActivity.this, DetailKonfirmasiProdukActivity.class);
                     intent.putExtra(Produk.TAG, Integer.parseInt(id));
-                    System.out.println("nilai dari"+id);
+                    System.out.println("nilai dari" + id);
                     startActivity(intent);
                 }
             });
-        }else {
+        } else {
             fab_add.setVisibility(View.GONE);
 
             dialog_login();
@@ -145,12 +204,12 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
                 apiInterface.tambahWishlist(id_konsumen, String.valueOf(id)).enqueue(new Callback<TambahWishlistResponse>() {
                     @Override
                     public void onResponse(Call<TambahWishlistResponse> call, Response<TambahWishlistResponse> response) {
-                        if (response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             favorite = true;
                             setFavorite();
 
                             Snackbar.make(view, "Ditambahkan ke Wishlist", Snackbar.LENGTH_LONG).show();
-                        }else {
+                        } else {
                             Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -170,21 +229,21 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
                 apiInterface.checkId(String.valueOf(id), id_konsumen).enqueue(new Callback<WishlistCheckResponse>() {
                     @Override
                     public void onResponse(Call<WishlistCheckResponse> call, Response<WishlistCheckResponse> response) {
-                        if (response.isSuccessful()){
-                            if (response.body() != null){
-                                if (response.body().getMaster().size()>0){
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                if (response.body().getMaster().size() > 0) {
                                     id_wishlist = response.body().getMaster().get(0).getIdWishlist();
-                                    System.out.println("id wishlistnya adalah"+id_wishlist);
+                                    System.out.println("id wishlistnya adalah" + id_wishlist);
 
                                     apiInterface.hapusWishlist(id_wishlist).enqueue(new Callback<HapusWishlistResponse>() {
                                         @Override
                                         public void onResponse(Call<HapusWishlistResponse> call, Response<HapusWishlistResponse> response) {
-                                            if (response.isSuccessful()){
+                                            if (response.isSuccessful()) {
                                                 favorite = false;
                                                 setFavorite();
 
                                                 Snackbar.make(view, "Dihapus dari Wishlist", Snackbar.LENGTH_LONG).show();
-                                            }else {
+                                            } else {
                                                 Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
                                             }
                                         }
@@ -196,11 +255,11 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
                                         }
                                     });
 
-                                }else {
+                                } else {
 //                                    Toast.makeText(getApplicationContext(), "id kosong", Toast.LENGTH_LONG).show();
                                 }
                             }
-                        }else {
+                        } else {
                             Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -217,17 +276,17 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
         fab_tambah_keranjang.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                apiInterface.tambahKeranjang(id_konsumen, String.valueOf(id)).enqueue(new Callback<TambahKeranjangResponse>() {
+                apiInterface.tambahKeranjang(id_konsumen, String.valueOf(id), "1", harga_produk, "").enqueue(new Callback<TambahKeranjangResponse>() {
                     @Override
                     public void onResponse(Call<TambahKeranjangResponse> call, Response<TambahKeranjangResponse> response) {
-                        if (response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             keranjang = true;
                             setKeranjang();
                             getCount();
 
                             Snackbar.make(view, "Ditambahkan ke keranjang", Snackbar.LENGTH_LONG).show();
-                        }else {
-                            Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -245,22 +304,22 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
                 apiInterface.checkIdKeranjang(String.valueOf(id), id_konsumen).enqueue(new Callback<KeranjangCheckResponse>() {
                     @Override
                     public void onResponse(Call<KeranjangCheckResponse> call, Response<KeranjangCheckResponse> response) {
-                        if (response.isSuccessful()){
-                            if (response.body() != null){
-                                if (response.body().getMaster().size()>0){
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                if (response.body().getMaster().size() > 0) {
                                     id_keranjang = response.body().getMaster().get(0).getIdKeranjang();
-                                    System.out.println("id keranjangnya adalah"+id_keranjang);
+                                    System.out.println("id keranjangnya adalah" + id_keranjang);
 
                                     apiInterface.hapusKeranjang(id_keranjang).enqueue(new Callback<HapusKeranjangResponse>() {
                                         @Override
                                         public void onResponse(Call<HapusKeranjangResponse> call, Response<HapusKeranjangResponse> response) {
-                                            if (response.isSuccessful()){
+                                            if (response.isSuccessful()) {
                                                 keranjang = false;
                                                 setKeranjang();
                                                 getCount();
 
                                                 Snackbar.make(view, "Dihapus dari Keranjang", Snackbar.LENGTH_LONG).show();
-                                            }else {
+                                            } else {
                                                 Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
                                             }
                                         }
@@ -271,12 +330,12 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
                                         }
                                     });
 
-                                }else {
+                                } else {
 //                                    Toast.makeText(getApplicationContext(), "id kosong", Toast.LENGTH_LONG).show();
                                 }
                             }
-                        }else {
-                            Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -287,68 +346,6 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
                 });
             }
         });
-
-
-
-        apiInterface.produkById(String.valueOf(id)).enqueue(new Callback<ProdukDetailResponse>() {
-            @Override
-            public void onResponse(Call<ProdukDetailResponse> call, Response<ProdukDetailResponse> response) {
-                if (response.isSuccessful()){
-                    if (response.body().getMaster().size()>0){
-                        nama_produk = response.body().getMaster().get(0).getNamaProduk();
-                        merk_produk = response.body().getMaster().get(0).getMerkProduk();
-                        kondisi = response.body().getMaster().get(0).getKondisi();
-                        harga_produk = response.body().getMaster().get(0).getHarga();
-                        deskripsi_produk = response.body().getMaster().get(0).getDeskripsi();
-                        stok_produk = response.body().getMaster().get(0).getStok();
-                        nama_toko = response.body().getMaster().get(0).getNamaToko();
-                        nomor_hp = response.body().getMaster().get(0).getNomorHp();
-                        foto1 = response.body().getMaster().get(0).getFoto1();
-                        foto2 = response.body().getMaster().get(0).getFoto2();
-                        foto3 = response.body().getMaster().get(0).getFoto3();
-                        foto4 = response.body().getMaster().get(0).getFoto4();
-
-                        tv_nama_produk.setText(nama_produk);
-                        tv_merk_produk.setText("Merk Produk:  "+merk_produk);
-                        tv_kondisi.setText("Kondisi:  "+kondisi);
-                        tv_harga_produk.setText("Rp. "+harga_produk);
-                        tv_deskripsi_produk.setText(deskripsi_produk);
-                        tv_stok_produk.setText("Stok Tersedia "+stok_produk);
-                        tv_nama_toko.setText(nama_toko);
-                        tv_no_handphone.setText(nomor_hp);
-
-                        Picasso.with(DetailProdukWishlistActivity.this)
-                                .load(ServerConfig.PRODUK_IMAGE +foto1)
-                                .into(iv_foto_produk);
-
-                        Picasso.with(DetailProdukWishlistActivity.this)
-                                .load(ServerConfig.PRODUK_IMAGE +foto2)
-                                .into(iv_foto_produk2);
-
-                        Picasso.with(DetailProdukWishlistActivity.this)
-                                .load(ServerConfig.PRODUK_IMAGE +foto3)
-                                .into(iv_foto_produk3);
-
-                        Picasso.with(DetailProdukWishlistActivity.this)
-                                .load(ServerConfig.PRODUK_IMAGE +foto4)
-                                .into(iv_foto_produk4);
-
-                        Picasso.with(DetailProdukWishlistActivity.this)
-                                .load(ServerConfig.TOKO_IMAGE +response.body().getMaster().get(0).getLogoToko())
-                                .into(iv_logo_toko);
-                    }
-                }else {
-                    Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ProdukDetailResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
 
         iv_foto_produk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -466,7 +463,7 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
                 .setPositiveButton("login", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(DetailProdukWishlistActivity.this,LoginActivity.class);
+                        Intent intent = new Intent(DetailProdukWishlistActivity.this, LoginActivity.class);
                         finish();
                         startActivity(intent);
                     }
@@ -490,16 +487,16 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
         apiInterface.keranjangCount(id_konsumen).enqueue(new Callback<KeranjangCountResponse>() {
             @Override
             public void onResponse(Call<KeranjangCountResponse> call, Response<KeranjangCountResponse> response) {
-                if (response.isSuccessful()){
-                    if (response.body().getMaster().size()>0){
-                        System.out.println("datanya"+response.body().getMaster().get(0).getNumber());
+                if (response.isSuccessful()) {
+                    if (response.body().getMaster().size() > 0) {
+                        System.out.println("datanya" + response.body().getMaster().get(0).getNumber());
                         keranjang_count = Integer.parseInt(response.body().getMaster().get(0).getNumber());
 
                         setupBadge();
                     }
 
-                }else {
-                    Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -523,31 +520,31 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<WishlistCheckResponse> call, Response<WishlistCheckResponse> response) {
                     System.out.println("responsenya" + response);
-                    if (response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         if (response.body() != null) {
-                            if (response.body().getMaster().size()>0){
+                            if (response.body().getMaster().size() > 0) {
                                 String id_produknya = response.body().getMaster().get(0).getIdProduk();
                                 String id_konsumennya = response.body().getMaster().get(0).getIdKonsumen();
                                 id_wishlist = response.body().getMaster().get(0).getIdWishlist();
-                                System.out.println("id produknya "+id_produknya + "id konsumennya "+id_konsumennya);
+                                System.out.println("id produknya " + id_produknya + "id konsumennya " + id_konsumennya);
 
-                                if (String.valueOf(id).equals(id_produknya) && id_konsumen.equals(id_konsumennya)){
+                                if (String.valueOf(id).equals(id_produknya) && id_konsumen.equals(id_konsumennya)) {
                                     favorite = true;
                                     setFavorite();
-                                }else {
+                                } else {
                                     favorite = false;
                                     setFavorite();
                                 }
 
-                            }else {
+                            } else {
 //                                Toast.makeText(getApplicationContext(), "id kosong", Toast.LENGTH_LONG).show();
                                 favorite = false;
                                 setFavorite();
                             }
                         }
 
-                    }else {
-                        Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -561,22 +558,22 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<KeranjangCheckResponse> call, Response<KeranjangCheckResponse> response) {
                     System.out.println("responsenya" + response);
-                    if (response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         if (response.body() != null) {
-                            if (response.body().getMaster().size()>0){
+                            if (response.body().getMaster().size() > 0) {
                                 String id_produknya = response.body().getMaster().get(0).getIdProduk();
                                 String id_konsumennya = response.body().getMaster().get(0).getIdKonsumen();
                                 id_keranjang = response.body().getMaster().get(0).getIdKeranjang();
-                                System.out.println("id produknya "+id_produknya + "id konsumennya "+id_konsumennya);
+                                System.out.println("id produknya " + id_produknya + "id konsumennya " + id_konsumennya);
 
-                                if (String.valueOf(id).equals(id_produknya) && id_konsumen.equals(id_konsumennya)){
+                                if (String.valueOf(id).equals(id_produknya) && id_konsumen.equals(id_konsumennya)) {
                                     keranjang = true;
                                     setKeranjang();
-                                }else {
+                                } else {
                                     keranjang = false;
                                     setKeranjang();
                                 }
-                            }else {
+                            } else {
 //                                Toast.makeText(getApplicationContext(), "id keranjang kosong", Toast.LENGTH_LONG).show();
                                 keranjang = false;
                                 setKeranjang();
@@ -584,8 +581,8 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
 
                         }
 
-                    }else {
-                        Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -604,21 +601,21 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
     }
 
     private void setFavorite() {
-        if (favorite){
+        if (favorite) {
             ll_tambah_wishlist.setVisibility(View.GONE);
             ll_hapus_wishlist.setVisibility(View.VISIBLE);
 
-        }else {
+        } else {
             ll_hapus_wishlist.setVisibility(View.GONE);
             ll_tambah_wishlist.setVisibility(View.VISIBLE);
         }
     }
 
-    private void setKeranjang(){
-        if (keranjang){
+    private void setKeranjang() {
+        if (keranjang) {
             ll_tambah_keranjang.setVisibility(View.GONE);
             ll_hapus_keranjang.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             ll_hapus_keranjang.setVisibility(View.GONE);
             ll_tambah_keranjang.setVisibility(View.VISIBLE);
         }
@@ -662,7 +659,7 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (sessionManager.isLoggedIn()){
+        if (sessionManager.isLoggedIn()) {
             menu.setGroupVisible(R.id.menu_txt_group, true);
         }
 
@@ -675,15 +672,15 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
             case R.id.keranjang:
                 Toast.makeText(getApplicationContext(), "Klik Keranjang", Toast.LENGTH_SHORT).show();
                 return true;
-            case R.id.chatting:
-                Toast.makeText(getApplicationContext(), "Klik Chat", Toast.LENGTH_SHORT).show();
-                return true;
+//            case R.id.chatting:
+//                Toast.makeText(getApplicationContext(), "Klik Chat", Toast.LENGTH_SHORT).show();
+//                return true;
             default:
                 return true;
         }
     }
 
-    private void goToMainActivity(){
+    private void goToMainActivity() {
         Intent intent = new Intent(DetailProdukWishlistActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
@@ -693,6 +690,6 @@ public class DetailProdukWishlistActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        goToMainActivity();
+//        goToMainActivity();
     }
 }

@@ -5,6 +5,13 @@
         android:title="Chat"
         android:icon="@drawable/ic_chat"
         app:showAsAction="always"
+        app:actionLayout="@layout/custom_notification_layout_chat"
+        android:visible="false"/>
+
+    <item android:id="@+id/cek_status"
+        android:title="Chat"
+        android:icon="@drawable/ic_transaksi"
+        app:showAsAction="always"
         android:visible="false"/>
 
     <item android:id="@+id/search"

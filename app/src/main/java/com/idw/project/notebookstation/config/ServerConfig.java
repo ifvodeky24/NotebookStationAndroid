@@ -1,8 +1,11 @@
 package com.idw.project.notebookstation.config;
 
 public class ServerConfig {
-    public static final String ENDPOINT="http://192.168.100.248";
+//    public static final String ENDPOINT="http://192.168.100.248";
+//    public static final String ENDPOINT="http://arslyn.com";
+//    public static final String ENDPOINT="http://172.16.181.32";
 //    public static final String ENDPOINT="http://192.168.43.133";  //wifi hape
+    public static final String ENDPOINT="http://192.168.100.248";  //wifi rumah
     public static final String SERVER= ENDPOINT+"/notebookstation/api/v1/";
 
     public static final String PRODUK_IMAGE= ENDPOINT+ "/notebookstation/web/files/images/produk_images/";

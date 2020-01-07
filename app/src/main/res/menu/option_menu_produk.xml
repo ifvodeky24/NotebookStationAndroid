@@ -4,10 +4,10 @@
 
     <group android:id="@+id/menu_txt_group"
         android:visible="false">
-        <item android:id="@+id/chatting"
-            android:title="Chat"
-            android:icon="@drawable/ic_chat"
-            app:showAsAction="always"/>
+<!--        <item android:id="@+id/chatting"-->
+<!--            android:title="Chat"-->
+<!--            android:icon="@drawable/ic_chat"-->
+<!--            app:showAsAction="always"/>-->
 
         <item android:id="@+id/keranjang"
             android:title="Keranjang"

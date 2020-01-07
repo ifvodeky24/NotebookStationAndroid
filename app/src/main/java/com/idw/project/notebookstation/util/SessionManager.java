@@ -20,6 +20,7 @@ public class SessionManager {
     public static final String PASSWORD="password";
     public static final String NOMOR_HP="nomor_hp";
     public static final String ALAMAT="alamat";
+    public static final String RESTORE_ID="restore_id";
     public static final String FOTO="foto";
 
     public Context getContext() {
@@ -32,7 +33,7 @@ public class SessionManager {
         editor = sharedPreferences.edit();
     }
 
-    public void createLogginSession(String id_konsumen, String username, String nama_lengkap, String email, String password, String nomor_hp, String alamat, String foto ){
+    public void createLogginSession(String id_konsumen, String username, String nama_lengkap, String email, String password, String nomor_hp, String alamat, String restore_id, String foto ){
         editor.putBoolean(IS_LOGGED_IN, true);
         editor.putString(ID_KONSUMEN, id_konsumen);
         editor.putString(USERNAME, username);
@@ -41,6 +42,7 @@ public class SessionManager {
         editor.putString(PASSWORD, password);
         editor.putString(NOMOR_HP, nomor_hp);
         editor.putString(ALAMAT, alamat);
+        editor.putString(RESTORE_ID, restore_id);
         editor.putString(FOTO, foto);
         editor.commit();
     }
@@ -54,6 +56,7 @@ public class SessionManager {
         user.put(PASSWORD, sharedPreferences.getString(PASSWORD, null));
         user.put(NOMOR_HP, sharedPreferences.getString(NOMOR_HP, null));
         user.put(ALAMAT, sharedPreferences.getString(ALAMAT, null));
+        user.put(RESTORE_ID, sharedPreferences.getString(RESTORE_ID, null));
         user.put(FOTO, sharedPreferences.getString(FOTO, null));
 
         return user;

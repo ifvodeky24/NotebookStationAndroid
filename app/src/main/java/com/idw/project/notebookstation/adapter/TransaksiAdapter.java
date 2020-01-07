@@ -2,11 +2,13 @@ package com.idw.project.notebookstation.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -15,9 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.idw.project.notebookstation.R;
+import com.idw.project.notebookstation.activity.DetailPembayaranActivity;
+import com.idw.project.notebookstation.activity.DetailPembayaranTransaksiActivity;
+import com.idw.project.notebookstation.activity.DetailTransaksiActivity;
 import com.idw.project.notebookstation.config.ServerConfig;
 import com.idw.project.notebookstation.model.Pesanan;
 import com.idw.project.notebookstation.model.Produk;
+import com.idw.project.notebookstation.rest.ApiClient;
+import com.idw.project.notebookstation.rest.ApiInterface;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
@@ -28,12 +35,10 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
     private Context context;
 
     private ArrayList<Pesanan> pesananList;
-//    private ArrayList<Produk> produkList;
 
     public TransaksiAdapter(Context context, ArrayList<Pesanan> pesananList) {
         this.context = context;
         this.pesananList = pesananList;
-//        this.produkList = produkList;
     }
 
     @NonNull
@@ -57,14 +62,25 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
         transaksiViewHolder.tv_nama_produk.setText(pesananList.get(i).getNamaProduk());
         transaksiViewHolder.tv_merk.setText(pesananList.get(i).getMerkProduk());
         transaksiViewHolder.tv_status.setText(pesananList.get(i).getStatus());
+        transaksiViewHolder.tv_kode_pesanan.setText(pesananList.get(i).getKodePesanan());
+        transaksiViewHolder.tv_tanggal_pesanan.setText(pesananList.get(i).getTanggalPesanan()+" WIB");
         transaksiViewHolder.tv_harga.setText("Rp."+df.format(Double.valueOf(pesananList.get(i).getHarga())));
 
         transaksiViewHolder.cv_transaksi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(context, DetailProdukActivity.class);
-//                intent.putExtra(DetailProdukActivity.TAG, wishlistList.get(i));
-//                context.startActivity(intent);
+                if (pesananList.get(i).getStatus().equalsIgnoreCase("Menunggu Pembayaran")){
+                    Intent intent = new Intent(context, DetailPembayaranTransaksiActivity.class);
+                    intent.putExtra("kode_pesanan", String.valueOf(pesananList.get(i).getKodePesanan()));
+                    intent.putExtra("total_tagihan", String.valueOf(pesananList.get(i).getTotalTagihan()));
+                    context.startActivity(intent);
+                }else {
+                    Intent intent = new Intent(context, DetailTransaksiActivity.class);
+                    intent.putExtra("kode_pesanan", String.valueOf(pesananList.get(i).getKodePesanan()));
+                    intent.putExtra("total_tagihan", String.valueOf(pesananList.get(i).getTotalTagihan()));
+                    intent.putExtra("id_produk", String.valueOf(pesananList.get(i).getIdProduk()));
+                    context.startActivity(intent);
+                }
             }
         });
 
@@ -77,7 +93,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
 
     class TransaksiViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tv_nama_produk, tv_merk, tv_harga, tv_status;
+        TextView tv_nama_produk, tv_merk, tv_harga, tv_status, tv_tanggal_pesanan, tv_kode_pesanan;
         CardView cv_transaksi;
         ImageView iv_foto;
 
@@ -85,9 +101,11 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.Tran
             super(itemView);
             tv_nama_produk = itemView.findViewById(R.id.tv_nama_produk);
             tv_merk = itemView.findViewById(R.id.tv_merk);
+            tv_kode_pesanan = itemView.findViewById(R.id.tv_kode_pesanan);
             tv_harga = itemView.findViewById(R.id.tv_harga);
             tv_status = itemView.findViewById(R.id.tv_status);
             iv_foto = itemView.findViewById(R.id.iv_foto);
+            tv_tanggal_pesanan = itemView.findViewById(R.id.tv_tanggal_pesanan);
             cv_transaksi = itemView.findViewById(R.id.cv_transaksi);
 
         }

@@ -1,0 +1,92 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="330dp"
+    android:layout_height="400dp"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:background="@color/colorWhite">
+
+    <com.github.florent37.shapeofview.shapes.ArcView
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shape_arc_cropDirection="inside"
+        app:shape_arc_height="20dp"
+        app:shape_arc_position="bottom">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="210dp"
+            android:background="@drawable/gambar_popup"
+            android:scaleType="centerInside">
+        </ImageView>
+
+    </com.github.florent37.shapeofview.shapes.ArcView>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Anda ingin membeli produk ini?"
+        android:textAlignment="center"
+        android:fontFamily="sans-serif"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
+
+
+
+    <View
+        android:layout_width="290dp"
+        android:layout_gravity="center"
+        android:layout_height="0.7dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/grey_20" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingRight="40dp"
+        android:paddingLeft="40dp"
+        android:textSize="12sp"
+        android:text="Yuk daftar aja kalau belum punya akun, tunggu apalagi! Dapatkan fitur menarik"
+        android:textAlignment="center"
+        android:textColor="@color/grey_60"/>
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="290dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/btn_1"
+        android:layout_gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="Login"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/btn_tanpa_login"
+        android:layout_width="290dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/btn_2"
+        android:layout_gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="Beli Tanpa Login"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+
+</LinearLayout>

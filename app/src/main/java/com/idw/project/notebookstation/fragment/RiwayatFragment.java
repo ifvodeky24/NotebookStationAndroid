@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.idw.project.notebookstation.R;
 import com.idw.project.notebookstation.adapter.TransaksiAdapter;
 import com.idw.project.notebookstation.model.Pesanan;
+import com.idw.project.notebookstation.response.BatalResponse;
 import com.idw.project.notebookstation.response.SelesaiResponse;
 import com.idw.project.notebookstation.rest.ApiClient;
 import com.idw.project.notebookstation.rest.ApiInterface;
@@ -72,28 +73,63 @@ public class RiwayatFragment extends Fragment {
             public void onResponse(Call<SelesaiResponse> call, Response<SelesaiResponse> response) {
                 System.out.println("responya"+response);
                 if (response.isSuccessful()){
-                    if(response.body().getMaster().size()>0){
-                        ll_data_pesanan_kosong.setVisibility(View.GONE);
-                        pesananArrayList.addAll(response.body().getMaster());
-                        System.out.println(response.body().getMaster().get(0).getIdPesanan());
+                    if (response.body() != null) {
+                        if(response.body().getMaster().size()>0){
+                            ll_data_pesanan_kosong.setVisibility(View.GONE);
+                            pesananArrayList.addAll(response.body().getMaster());
+                            System.out.println(response.body().getMaster().get(0).getIdPesanan());
 
-                        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-                        recylerView.setLayoutManager(manager);
-                        recylerView.setHasFixedSize(true);
-                        transaksiAdapter = new TransaksiAdapter(getActivity(), pesananArrayList);
-                        recylerView.setAdapter(transaksiAdapter);
+                            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                            recylerView.setLayoutManager(manager);
+                            recylerView.setHasFixedSize(true);
+                            transaksiAdapter = new TransaksiAdapter(getActivity(), pesananArrayList);
+                            recylerView.setAdapter(transaksiAdapter);
 
-                    }else {
-//                        Toast.makeText(getApplicationContext(), "Data Menunggu Pembayaran Kosong", Toast.LENGTH_SHORT).show();
-                        ll_data_pesanan_kosong.setVisibility(View.VISIBLE);
+                        }else {
+    //                        Toast.makeText(getApplicationContext(), "Data Menunggu Pembayaran Kosong", Toast.LENGTH_SHORT).show();
+                            ll_data_pesanan_kosong.setVisibility(View.VISIBLE);
+                        }
                     }
                 }else {
-                    Toast.makeText(getActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<SelesaiResponse> call, Throwable t) {
+                Toast.makeText(getActivity(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        apiInterface.batal(id_konsumen).enqueue(new Callback<BatalResponse>() {
+            @Override
+            public void onResponse(Call<BatalResponse> call, Response<BatalResponse> response) {
+                System.out.println("responya"+response);
+                if (response.isSuccessful()){
+                    if (response.body() != null) {
+                        if(response.body().getMaster().size()>0){
+                            ll_data_pesanan_kosong.setVisibility(View.GONE);
+                            pesananArrayList.addAll(response.body().getMaster());
+                            System.out.println(response.body().getMaster().get(0).getIdPesanan());
+
+                            LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                            recylerView.setLayoutManager(manager);
+                            recylerView.setHasFixedSize(true);
+                            transaksiAdapter = new TransaksiAdapter(getActivity(), pesananArrayList);
+                            recylerView.setAdapter(transaksiAdapter);
+
+                        }else {
+                            //  Toast.makeText(getApplicationContext(), "Data Menunggu Pembayaran Kosong", Toast.LENGTH_SHORT).show();
+                            ll_data_pesanan_kosong.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }else {
+                    Toast.makeText(getActivity(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BatalResponse> call, Throwable t) {
                 Toast.makeText(getActivity(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
             }
         });

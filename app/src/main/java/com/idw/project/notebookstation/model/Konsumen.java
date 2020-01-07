@@ -29,6 +29,9 @@ public class Konsumen implements Parcelable {
     @SerializedName("alamat")
     @Expose
     private String alamat;
+    @SerializedName("restore_id")
+    @Expose
+    private String restoreId;
     @SerializedName("foto")
     @Expose
     private String foto;
@@ -95,6 +98,14 @@ public class Konsumen implements Parcelable {
         this.alamat = alamat;
     }
 
+    public String getRestoreId() {
+        return restoreId;
+    }
+
+    public void setRestoreId(String restoreId) {
+        this.restoreId = restoreId;
+    }
+
     public String getFoto() {
         return foto;
     }
@@ -120,6 +131,10 @@ public class Konsumen implements Parcelable {
     }
 
 
+    public Konsumen() {
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -134,12 +149,10 @@ public class Konsumen implements Parcelable {
         dest.writeString(this.password);
         dest.writeString(this.nomorHp);
         dest.writeString(this.alamat);
+        dest.writeString(this.restoreId);
         dest.writeString(this.foto);
         dest.writeString(this.createdAt);
         dest.writeString(this.updatedAt);
-    }
-
-    public Konsumen() {
     }
 
     protected Konsumen(Parcel in) {
@@ -150,12 +163,13 @@ public class Konsumen implements Parcelable {
         this.password = in.readString();
         this.nomorHp = in.readString();
         this.alamat = in.readString();
+        this.restoreId = in.readString();
         this.foto = in.readString();
         this.createdAt = in.readString();
         this.updatedAt = in.readString();
     }
 
-    public static final Parcelable.Creator<Konsumen> CREATOR = new Parcelable.Creator<Konsumen>() {
+    public static final Creator<Konsumen> CREATOR = new Creator<Konsumen>() {
         @Override
         public Konsumen createFromParcel(Parcel source) {
             return new Konsumen(source);

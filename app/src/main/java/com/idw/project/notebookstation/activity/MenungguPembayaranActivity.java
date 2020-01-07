@@ -38,6 +38,7 @@ public class MenungguPembayaranActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menunggu_pembayaran);
+        setTitle("Menunggu Pembayaran");
 
         recylerView = findViewById(R.id.recylerView1);
         ll_data_pesanan_kosong = findViewById(R.id.ll_data_pesanan_kosong);
@@ -56,23 +57,25 @@ public class MenungguPembayaranActivity extends AppCompatActivity {
             public void onResponse(Call<MenungguPembayaranResponse> call, Response<MenungguPembayaranResponse> response) {
                 System.out.println("responya"+response);
                 if (response.isSuccessful()){
-                    if(response.body().getMaster().size()>0){
-                        ll_data_pesanan_kosong.setVisibility(View.GONE);
-                        pesananArrayList.addAll(response.body().getMaster());
-                        System.out.println(response.body().getMaster().get(0).getIdPesanan());
+                    if (response.body() != null) {
+                        if(response.body().getMaster().size()>0){
+                            ll_data_pesanan_kosong.setVisibility(View.GONE);
+                            pesananArrayList.addAll(response.body().getMaster());
+                            System.out.println(response.body().getMaster().get(0).getIdPesanan());
 
-                        LinearLayoutManager manager = new LinearLayoutManager(MenungguPembayaranActivity.this);
-                        recylerView.setLayoutManager(manager);
-                        recylerView.setHasFixedSize(true);
-                        transaksiAdapter = new TransaksiAdapter(MenungguPembayaranActivity.this, pesananArrayList);
-                        recylerView.setAdapter(transaksiAdapter);
+                            LinearLayoutManager manager = new LinearLayoutManager(MenungguPembayaranActivity.this);
+                            recylerView.setLayoutManager(manager);
+                            recylerView.setHasFixedSize(true);
+                            transaksiAdapter = new TransaksiAdapter(MenungguPembayaranActivity.this, pesananArrayList);
+                            recylerView.setAdapter(transaksiAdapter);
 
-                    }else {
-//                        Toast.makeText(getApplicationContext(), "Data Menunggu Pembayaran Kosong", Toast.LENGTH_SHORT).show();
-                        ll_data_pesanan_kosong.setVisibility(View.VISIBLE);
+                        }else {
+    //                        Toast.makeText(getApplicationContext(), "Data Menunggu Pembayaran Kosong", Toast.LENGTH_SHORT).show();
+                            ll_data_pesanan_kosong.setVisibility(View.VISIBLE);
+                        }
                     }
                 }else {
-                    Toast.makeText(getApplicationContext(), "terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
                 }
             }
 
